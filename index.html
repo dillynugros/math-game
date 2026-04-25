@@ -9,30 +9,89 @@
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800;900&display=swap');
 
         :root {
-            --bg-top: #FFE3EC; --bg-bottom: #FFB6C1; --stage: #FFA0B4; --text-dark: #3A2F32;
+            --bg-top: #FFE3EC;
+            --bg-bottom: #FFB6C1;
+            --stage: #FFA0B4;
+            --text-dark: #3A2F32;
         }
 
-        * { user-select: none; -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        body { font-family: 'Nunito', sans-serif; background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%); color: var(--text-dark); overflow: hidden; margin: 0; padding: 0; height: 100vh; height: 100dvh; touch-action: none; }
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+            color: var(--text-dark);
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            height: 100dvh;
+            touch-action: none;
+        }
+
         .font-kids { font-family: 'Fredoka One', cursive; }
 
         /* --- STAGE BACKGROUND & PLATFORMS --- */
-        .stage-floor { position: absolute; bottom: -10vh; left: -50vw; width: 200vw; height: 40vh; background: var(--stage); border-radius: 50% 50% 0 0; box-shadow: inset 0 20px 50px rgba(255,255,255,0.5), 0 -10px 30px rgba(0,0,0,0.05); z-index: 1; }
-        .stage-platform, .boss-platform, .cage-platform { background: #FFD1DC; border: 6px solid #FFF; border-radius: 50%; box-shadow: 0 10px 0 #FFA0B4; position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); height: 50px; z-index: -1; }
-        .stage-platform { width: 140%; } .boss-platform { background: #C4A1FF; box-shadow: 0 10px 0 #9D75EA; width: 130%; } .cage-platform { background: #A8E6CF; box-shadow: 0 10px 0 #7DCBBA; width: 150%; }
+        .stage-floor {
+            position: absolute; bottom: -10vh; left: -50vw; width: 200vw; height: 40vh;
+            background: var(--stage); border-radius: 50% 50% 0 0;
+            box-shadow: inset 0 20px 50px rgba(255,255,255,0.5), 0 -10px 30px rgba(0,0,0,0.05); z-index: 1;
+        }
+
+        .stage-platform, .boss-platform, .cage-platform {
+            background: #FFD1DC; border: 6px solid #FFF; border-radius: 50%;
+            box-shadow: 0 10px 0 #FFA0B4; position: absolute; bottom: -20px; left: 50%;
+            transform: translateX(-50%); height: 50px; z-index: -1;
+        }
+        .stage-platform { width: 140%; }
+        .boss-platform { background: #C4A1FF; box-shadow: 0 10px 0 #9D75EA; width: 130%; }
+        .cage-platform { background: #A8E6CF; box-shadow: 0 10px 0 #7DCBBA; width: 150%; }
+
+        .spotlight {
+            position: absolute; top: -10vh; width: 15vw; height: 120vh;
+            background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 50px; filter: blur(20px); transform-origin: top center; z-index: 0;
+        }
+        .spotlight-1 { left: 20%; animation: swing 8s ease-in-out infinite alternate; }
+        .spotlight-2 { right: 20%; animation: swing 6s ease-in-out infinite alternate-reverse; }
+        @keyframes swing { 0% { transform: rotate(-25deg); } 100% { transform: rotate(25deg); } }
 
         /* --- ANIMATIONS --- */
-        .anim-breathe { animation: breathe 3s ease-in-out infinite; } @keyframes breathe { 0%, 100% { transform: scaleY(1) translateY(0); } 50% { transform: scaleY(0.96) translateY(5px); } }
-        .anim-float { animation: float 4s ease-in-out infinite; } @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        .anim-jump { animation: jump 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); } @keyframes jump { 0% { transform: scale(1) translateY(0) rotate(0); } 40% { transform: scale(1.1) translateY(-30px) rotate(10deg); } 100% { transform: scale(1) translateY(0) rotate(0); } }
-        .anim-squish { animation: squish 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); } @keyframes squish { 0%, 100% { transform: scale(1, 1); } 30% { transform: scale(1.4, 0.6) translateY(20px); filter: brightness(1.5); } }
-        .anim-shake { animation: shake 0.4s ease-in-out; } @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 75% { transform: translateX(-10px); } }
-        @keyframes blink { 0%, 96%, 98%, 100% { transform: scaleY(1); } 97%, 99% { transform: scaleY(0.1); } } .anim-blink { animation: blink 5s infinite; }
-        .pop-in { animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; opacity: 0; transform: scale(0.5); } @keyframes popIn { to { opacity: 1; transform: scale(1); } }
-        .pulse-text { animation: pulseTxt 1s infinite alternate; } @keyframes pulseTxt { from { transform: scale(1); } to { transform: scale(1.05); } }
+        .anim-breathe { animation: breathe 3s ease-in-out infinite; }
+        @keyframes breathe { 0%, 100% { transform: scaleY(1) translateY(0); } 50% { transform: scaleY(0.96) translateY(5px); } }
+
+        .anim-float { animation: float 4s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        .anim-jump { animation: jump 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes jump { 0% { transform: scale(1) translateY(0) rotate(0); } 40% { transform: scale(1.1) translateY(-30px) rotate(10deg); } 100% { transform: scale(1) translateY(0) rotate(0); } }
+
+        .anim-squish { animation: squish 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes squish { 0%, 100% { transform: scale(1, 1); } 30% { transform: scale(1.4, 0.6) translateY(20px); filter: brightness(1.5); } }
+
+        .anim-shake { animation: shake 0.4s ease-in-out; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 75% { transform: translateX(-10px); } }
+
+        @keyframes blink { 0%, 96%, 98%, 100% { transform: scaleY(1); } 97%, 99% { transform: scaleY(0.1); } }
+        .anim-blink { animation: blink 5s infinite; }
+
+        .pop-in { animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; opacity: 0; transform: scale(0.5); }
+        @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+        
+        .pulse-text { animation: pulseTxt 1s infinite alternate; }
+        @keyframes pulseTxt { from { transform: scale(1); } to { transform: scale(1.05); } }
 
         /* --- CLAYMORPHISM UI --- */
-        .clay-card { background: #fff; border-radius: 30px; box-shadow: inset 5px 5px 15px rgba(255,255,255,0.8), inset -5px -5px 15px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.1), 0 4px 0 rgba(0,0,0,0.05); border: 4px solid #fff; }
+        .clay-card {
+            background: #fff; border-radius: 30px;
+            box-shadow: inset 5px 5px 15px rgba(255,255,255,0.8), inset -5px -5px 15px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.1), 0 4px 0 rgba(0,0,0,0.05);
+            border: 4px solid #fff;
+        }
+
         .clay-btn { border-radius: 25px; position: relative; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translateY(0); }
         .clay-btn.pink { background: #FF6B6B; box-shadow: inset 2px 2px 5px rgba(255,255,255,0.4), inset -2px -5px 5px rgba(0,0,0,0.1), 0 8px 0 #D94545, 0 15px 15px rgba(255,107,107,0.4); border: 2px solid #FF8E8E; }
         .clay-btn.cyan { background: #4ECDC4; box-shadow: inset 2px 2px 5px rgba(255,255,255,0.4), inset -2px -5px 5px rgba(0,0,0,0.1), 0 8px 0 #2A9D94, 0 15px 15px rgba(78,205,196,0.4); border: 2px solid #7DE5DE; }
@@ -40,32 +99,60 @@
         .clay-btn.purple { background: #C4A1FF; box-shadow: inset 2px 2px 5px rgba(255,255,255,0.4), inset -2px -5px 5px rgba(0,0,0,0.1), 0 8px 0 #9D75EA, 0 15px 15px rgba(196,161,255,0.4); border: 2px solid #D6BFFF; }
         .clay-btn.green { background: #A8E6CF; color: #2C7A60; box-shadow: inset 2px 2px 5px rgba(255,255,255,0.8), inset -2px -5px 5px rgba(0,0,0,0.1), 0 8px 0 #7DCBBA, 0 15px 15px rgba(168,230,207,0.4); border: 2px solid #C4F2E1; }
         .clay-btn.orange { background: #FF9F43; box-shadow: inset 2px 2px 5px rgba(255,255,255,0.4), inset -2px -5px 5px rgba(0,0,0,0.1), 0 8px 0 #D97A2E, 0 15px 15px rgba(255,159,67,0.4); border: 2px solid #FFC08A; }
+
         .clay-btn:active, .clay-btn.pressed { transform: translateY(8px); box-shadow: inset 2px 2px 5px rgba(255,255,255,0.4), inset -2px -5px 5px rgba(0,0,0,0.1), 0 0px 0 transparent, 0 5px 5px rgba(0,0,0,0.2); }
         .clay-btn.disabled { filter: grayscale(1); opacity: 0.5; pointer-events: none; transform: translateY(8px); box-shadow: none; }
 
         /* --- MONSTERS & PROPS --- */
-        .jelly-monster { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; animation: amoebaMorph 4s ease-in-out infinite alternate; box-shadow: inset 15px 15px 25px rgba(255,255,255,0.5), inset -15px -15px 25px rgba(0,0,0,0.3), 0 20px 30px rgba(0,0,0,0.2); transition: background-color 0.5s ease, transform 0.3s; }
+        .jelly-monster {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; animation: amoebaMorph 4s ease-in-out infinite alternate;
+            box-shadow: inset 15px 15px 25px rgba(255,255,255,0.5), inset -15px -15px 25px rgba(0,0,0,0.3), 0 20px 30px rgba(0,0,0,0.2); transition: background-color 0.5s ease, transform 0.3s;
+        }
         @keyframes amoebaMorph { 0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; } 50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; } 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; } }
+
         .hp-dot { width: 14px; height: 14px; background: #FF6B6B; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: all 0.3s ease; }
         .hp-dot.empty { background: #E2E8F0; transform: scale(0.6); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
 
-        /* --- HAT OVERLAY --- */
-        .hat-overlay { position: absolute; left: 50%; transform: translateX(-50%) rotate(-5deg); z-index: 10; font-size: 3.5rem; transition: all 0.3s; pointer-events: none; }
+        /* --- EAT MODE SPECIFIC --- */
+        .falling-food {
+            position: absolute; width: 60px; height: 60px; background: #fff; border-radius: 50%;
+            box-shadow: inset 0 0 10px rgba(255,107,107,0.2), 0 6px 12px rgba(0,0,0,0.15);
+            border: 4px solid #FF6B6B; display: flex; align-items: center; justify-content: center;
+            font-family: 'Fredoka One', cursive; font-size: 28px; color: #FF6B6B;
+            z-index: 25;
+        }
 
-        /* --- MODE 4: SHOPPING MARKET --- */
-        .market-bg { background: #FFF3E0; }
-        .market-awning { height: 30px; background: repeating-linear-gradient(90deg, #FF6B6B, #FF6B6B 40px, #FFF 40px, #FFF 80px); box-shadow: 0 5px 10px rgba(0,0,0,0.1); border-bottom: 4px solid #D94545; }
-        .market-shelf { background: #D2691E; border-radius: 10px; border-bottom: 10px solid #8B4513; box-shadow: 0 10px 15px rgba(0,0,0,0.2); position: relative; }
-        .shelf-item-btn { background: rgba(255,255,255,0.9); border: 4px solid #FFF; border-radius: 15px; font-size: 40px; width: 70px; height: 80px; display: flex; flex-col; justify-content: center; align-items: center; box-shadow: 0 5px 0 #CD853F; transition: transform 0.1s, box-shadow 0.1s; position: relative; }
-        .shelf-item-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #CD853F; }
-        .price-tag { position: absolute; bottom: -10px; right: -10px; background: #FFE66D; color: #8B6508; font-size: 14px; padding: 2px 6px; border-radius: 10px; border: 2px solid #FFF; font-family: 'Fredoka One'; box-shadow: 0 2px 2px rgba(0,0,0,0.2); }
-        .coin-btn { width: 80px; height: 80px; background: radial-gradient(circle at 30% 30%, #FFDF00, #B8860B); border-radius: 50%; border: 4px solid #FFF; box-shadow: 0 8px 0 #8B6508, 0 15px 15px rgba(0,0,0,0.2); color: #8B6508; font-family: 'Fredoka One'; font-size: 32px; text-shadow: 1px 1px 0 rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; transition: all 0.1s; }
-        .coin-btn:active { transform: translateY(8px); box-shadow: 0 0 0 #8B6508; }
+        /* --- DETECTIVE MODE SPECIFIC --- */
+        .cage {
+            width: 140px; height: 160px; border: 8px solid #cbd5e1; border-radius: 20px 20px 0 0;
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 20px, #cbd5e1 20px, #cbd5e1 28px);
+            position: relative; overflow: hidden; box-shadow: inset 0 20px 30px rgba(0,0,0,0.2);
+        }
+        .cage-animal { font-size: 70px; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); filter: brightness(0.2); transition: all 0.5s; }
+        .cage.open .cage-animal { filter: brightness(1); transform: translateX(-50%) scale(1.2) translateY(-20px); animation: jump 0.5s infinite alternate; }
+        .cage.open { border-color: transparent; background-image: none; box-shadow: none; }
+        
+        .padlock {
+            width: 80px; height: 70px; background: #fbbf24; border-radius: 10px 10px 30px 30px;
+            position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.5), inset -2px -5px 5px rgba(0,0,0,0.2), 0 10px 15px rgba(0,0,0,0.3);
+            border: 4px solid #f59e0b; display: flex; align-items: center; justify-content: center; z-index: 10;
+        }
+        .padlock::before {
+            content: ''; position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+            width: 40px; height: 40px; border: 8px solid #94a3b8; border-bottom: none; border-radius: 20px 20px 0 0;
+        }
+        .padlock-broken { animation: lockBreak 0.5s forwards; }
+        @keyframes lockBreak { 0% { transform: translate(-50%, 0) rotate(0); opacity: 1; } 100% { transform: translate(-50%, 100px) rotate(45deg); opacity: 0; } }
 
-        /* Meta screens grid */
+        /* --- ZOO & HATS GRID --- */
         .zoo-bg { background: linear-gradient(180deg, #A8E6CF 0%, #DCEDC1 100%); }
         .hat-bg { background: linear-gradient(180deg, #FFD1DC 0%, #FFE3EC 100%); }
-        .animal-pen, .hat-slot { background: rgba(255,255,255,0.7); border: 4px solid #fff; border-radius: 20px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 40px; box-shadow: inset 0 5px 10px rgba(0,0,0,0.05); position: relative; transition: transform 0.2s; }
+        .animal-pen, .hat-slot {
+            background: rgba(255,255,255,0.7); border: 4px solid #fff; border-radius: 20px;
+            height: 80px; display: flex; align-items: center; justify-content: center; font-size: 40px;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.05); position: relative; transition: transform 0.2s;
+        }
         .animal-pen.locked { filter: grayscale(1); opacity: 0.5; font-size: 30px; color: #94a3b8; font-family: 'Fredoka One'; }
         .hat-slot { cursor: pointer; } .hat-slot:active { transform: scale(0.95); }
         .hat-slot.equipped { border-color: #FF6B6B; background: #FFF0F5; box-shadow: 0 0 15px rgba(255,107,107,0.5); }
@@ -78,6 +165,8 @@
 <body id="gameBody">
 
     <!-- Scenery -->
+    <div class="spotlight spotlight-1"></div>
+    <div class="spotlight spotlight-2"></div>
     <div class="stage-floor" id="bgFloor"></div>
 
     <!-- FX Canvas -->
@@ -87,59 +176,50 @@
     <!-- START SCREEN                                   -->
     <!-- ============================================== -->
     <div id="uiStart" class="absolute inset-0 flex flex-col items-center justify-center z-50 bg-white/60 backdrop-blur-md transition-opacity duration-500 overflow-hidden">
-        <div class="absolute top-6 left-6 bg-yellow-50 px-4 py-2 rounded-full border-4 border-yellow-300 shadow-md flex items-center gap-2 z-20">
-            <span class="text-2xl anim-breathe">🌟</span><span class="font-kids text-xl text-yellow-600" id="uiGlobalStars">0</span>
-        </div>
-
-        <!-- Animasi Ornamen Matematika -->
         <div class="absolute inset-0 pointer-events-none">
-            <div class="absolute top-10 left-[10%] text-5xl anim-float text-pink-400 font-kids opacity-70">1️⃣</div>
+            <div class="absolute top-10 left-[10%] text-5xl anim-float text-pink-400 font-kids opacity-70">🎵</div>
             <div class="absolute top-[20%] right-[15%] text-6xl anim-breathe text-cyan-400 font-kids opacity-70">➕</div>
             <div class="absolute bottom-[30%] left-[15%] text-6xl anim-float text-yellow-400 font-kids opacity-70" style="animation-delay: -1s">➖</div>
-            <div class="absolute bottom-[15%] right-[10%] text-5xl anim-breathe text-purple-400 font-kids opacity-70" style="animation-delay: -2s">2️⃣</div>
-            <div class="absolute top-[40%] left-[5%] text-4xl anim-float text-red-400 font-kids opacity-60" style="animation-delay: -1.5s">✖️</div>
-            <div class="absolute top-[50%] right-[8%] text-5xl anim-jump text-green-400 font-kids opacity-60" style="animation-delay: -0.5s">➗</div>
-            <div class="absolute bottom-[10%] left-[40%] text-6xl anim-float text-blue-400 font-kids opacity-70" style="animation-delay: -2.5s">3️⃣</div>
-            <div class="absolute top-[15%] left-[45%] text-5xl anim-breathe text-orange-400 font-kids opacity-70" style="animation-delay: -0.8s">🟰</div>
+            <div class="absolute bottom-[15%] right-[10%] text-5xl anim-breathe text-purple-400 font-kids opacity-70" style="animation-delay: -2s">⭐</div>
+            <div class="absolute top-[40%] left-[5%] text-4xl anim-float text-red-400 font-kids opacity-60" style="animation-delay: -1.5s">💖</div>
         </div>
 
-        <div class="clay-card p-6 md:p-8 text-center max-w-md w-11/12 relative z-10 max-h-[95vh] overflow-y-auto flex flex-col items-center">
-            
-            <!-- Tempat Hat Tersembunyi (Agar logic JS tidak error) -->
-            <div id="menuHat" style="display:none;"></div>
+        <!-- Global Stars Display -->
+        <div class="absolute top-6 left-6 bg-yellow-50 px-4 py-2 rounded-full border-4 border-yellow-300 shadow-md flex items-center gap-2 z-20">
+            <span class="text-2xl anim-breathe">🌟</span>
+            <span class="font-kids text-xl text-yellow-600" id="uiGlobalStars">0</span>
+        </div>
 
-            <h1 class="font-kids text-4xl md:text-5xl text-pink-500 drop-shadow-sm mb-2 mt-4 leading-tight">
-                BELAJAR <br><span class="text-cyan-400">MATEMATIKA</span>
+        <div class="clay-card p-6 md:p-10 text-center max-w-md w-11/12 relative z-10 max-h-[90vh] overflow-y-auto">
+            
+            <h1 class="font-kids text-4xl md:text-5xl text-pink-500 drop-shadow-sm mb-2 mt-2 leading-tight">
+                BELAJAR<br><span class="text-cyan-400">MATEMATIKA</span>
             </h1>
+            <p class="text-gray-500 font-bold mb-4">Pilih Petualanganmu!</p>
 
-            <p class="font-kids text-lg text-gray-500 mb-6 pulse-text">Pilih Modenya!</p>
-
-            <!-- Game Modes Grid -->
-            <div class="grid grid-cols-2 gap-3 w-full mb-4">
-                <button id="btnStartMode1" class="clay-btn pink text-white font-kids text-sm md:text-base py-3 flex flex-col items-center pop-in">
-                    <span class="text-2xl mb-1">🎮</span><span>Pemburu Nada</span>
-                    <span class="text-[10px] bg-black/20 px-2 rounded-full mt-1">🏆 <span id="h1">0</span></span>
+            <!-- TAMPILAN BUTTON MEMANJANG VERTIKAL SEPERTI PERMINTAAN -->
+            <div class="flex flex-col gap-3">
+                <button id="btnStartMode1" class="clay-btn pink text-white font-kids text-lg py-3 px-4 w-full flex justify-between items-center pop-in">
+                    <span>🎮 Pemburu Nada</span><span class="text-xs bg-black/20 px-2 rounded-full" id="h1">0</span>
                 </button>
-                <button id="btnStartMode2" class="clay-btn yellow text-yellow-900 font-kids text-sm md:text-base py-3 flex flex-col items-center pop-in" style="animation-delay: 0.1s">
-                    <span class="text-2xl mb-1">🍔</span><span>Nyam-Nyam</span>
-                    <span class="text-[10px] bg-black/10 px-2 rounded-full mt-1">🏆 <span id="h2">0</span></span>
+                <button id="btnStartMode2" class="clay-btn yellow text-yellow-900 font-kids text-lg py-3 px-4 w-full flex justify-between items-center pop-in" style="animation-delay: 0.1s">
+                    <span>🍔 Nyam-Nyam</span><span class="text-xs bg-black/10 px-2 rounded-full" id="h2">0</span>
                 </button>
-                <button id="btnStartMode3" class="clay-btn green text-white font-kids text-sm md:text-base py-3 flex flex-col items-center pop-in" style="animation-delay: 0.2s">
-                    <span class="text-2xl mb-1">🔍</span><span>Detektif Angka</span>
-                    <span class="text-[10px] bg-black/20 px-2 rounded-full mt-1">🏆 <span id="h3">0</span></span>
+                <button id="btnStartMode3" class="clay-btn green text-white font-kids text-lg py-3 px-4 w-full flex justify-between items-center pop-in" style="animation-delay: 0.2s">
+                    <span>🔍 Detektif Angka</span><span class="text-xs bg-black/20 px-2 rounded-full" id="h3">0</span>
                 </button>
-                <button id="btnStartMode4" class="clay-btn orange text-white font-kids text-sm md:text-base py-3 flex flex-col items-center pop-in" style="animation-delay: 0.3s">
-                    <span class="text-2xl mb-1">🛒</span><span>Pasar Ajaib</span>
-                    <span class="text-[10px] bg-black/20 px-2 rounded-full mt-1">🏆 <span id="h4">0</span></span>
+                <button id="btnStartMode4" class="clay-btn orange text-white font-kids text-lg py-3 px-4 w-full flex justify-between items-center pop-in" style="animation-delay: 0.3s">
+                    <span>🛒 Pasar Ajaib</span><span class="text-xs bg-black/20 px-2 rounded-full" id="h4">0</span>
                 </button>
-            </div>
-            
-            <hr class="border-gray-200 w-full mb-3">
-            
-            <!-- Meta Games -->
-            <div class="flex w-full gap-3">
-                <button id="btnZoo" class="clay-btn purple text-white font-kids text-sm md:text-base py-3 flex-1 flex items-center justify-center gap-2">🦁 Zoo</button>
-                <button id="btnHats" class="clay-btn cyan text-white font-kids text-sm md:text-base py-3 flex-1 flex items-center justify-center gap-2">🎩 Topi</button>
+                
+                <hr class="border-gray-200 my-2">
+                
+                <button id="btnZoo" class="clay-btn purple text-white font-kids text-xl py-3 px-4 w-full flex items-center justify-center gap-2 pulse-text">
+                    <span>🦁 Kebun Binatang</span>
+                </button>
+                <button id="btnHats" class="clay-btn cyan text-white font-kids text-xl py-3 px-4 w-full flex items-center justify-center gap-2 pop-in" style="animation-delay: 0.1s">
+                    <span>🎩 Toko Topi</span>
+                </button>
             </div>
         </div>
     </div>
@@ -155,7 +235,11 @@
             <div id="endEmoji" class="text-7xl mb-4 anim-breathe">💖</div>
             <h1 id="endTitle" class="font-kids text-4xl text-pink-500 mb-2">KERJA BAGUS!</h1>
             <p class="text-xl text-gray-600 font-bold mb-2">Bintang Didapat: <br><span id="endScore" class="font-kids text-yellow-400 text-6xl drop-shadow-sm">0</span> 🌟</p>
-            <div id="newRecordBadge" class="hidden bg-gradient-to-r from-pink-400 to-cyan-400 text-white font-kids rounded-full py-1 px-4 mb-6 text-sm mx-auto shadow-md anim-float">✨ REKOR BARU! ✨</div>
+            
+            <div id="newRecordBadge" class="hidden bg-gradient-to-r from-pink-400 to-cyan-400 text-white font-kids rounded-full py-1 px-4 mb-6 text-sm mx-auto shadow-md anim-float">
+                ✨ REKOR BARU! ✨
+            </div>
+            
             <div class="flex gap-2 w-full mt-4">
                 <button id="btnEndHome" class="clay-btn yellow flex-1 text-2xl py-3 border-2 border-white">🏠</button>
                 <button id="btnRestart" class="clay-btn cyan flex-[3] text-white font-kids text-2xl py-3 border-2 border-white">MAIN LAGI!</button>
@@ -169,14 +253,23 @@
     <div id="uiZoo" class="absolute inset-0 zoo-bg z-40 hidden flex-col transition-opacity duration-500">
         <header class="w-full p-4 flex justify-between items-center bg-white/50 backdrop-blur-md shadow-sm pointer-events-auto">
             <button class="btnMetaHome clay-card w-12 h-12 flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-200">🏠</button>
-            <div class="bg-white px-4 py-2 rounded-full border-4 border-yellow-300 shadow-md flex items-center gap-2"><span class="text-xl">🌟</span><span class="font-kids text-xl text-yellow-600 metaStarsDisplay">0</span></div>
+            <div class="bg-white px-4 py-2 rounded-full border-4 border-yellow-300 shadow-md flex items-center gap-2">
+                <span class="text-xl">🌟</span>
+                <span class="font-kids text-xl text-yellow-600 metaStarsDisplay">0</span>
+            </div>
         </header>
+
         <div class="flex-1 overflow-y-auto p-6 pb-24">
-            <h1 class="font-kids text-3xl text-green-700 text-center mb-6 drop-shadow-sm">Koleksi Hewan</h1>
-            <div class="grid grid-cols-3 md:grid-cols-4 gap-4" id="zooGrid"></div>
+            <h1 class="font-kids text-3xl text-green-700 text-center mb-6 drop-shadow-sm">Koleksi Hewanmu</h1>
+            <div class="grid grid-cols-3 md:grid-cols-4 gap-4" id="zooGrid">
+                <!-- Generated via JS -->
+            </div>
         </div>
-        <div class="absolute bottom-6 w-full px-6 max-w-sm left-1/2 -translate-x-1/2">
-            <button id="btnFeedZoo" class="clay-btn pink text-white font-kids text-xl py-4 w-full shadow-xl flex items-center justify-center gap-2">🍎 Beri Makan (10 🌟)</button>
+
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 pointer-events-auto w-full px-6 max-w-sm">
+            <button id="btnFeedZoo" class="clay-btn pink text-white font-kids text-xl py-4 w-full shadow-xl flex items-center justify-center gap-2">
+                🍎 Beri Makan (10 🌟)
+            </button>
         </div>
     </div>
 
@@ -186,7 +279,10 @@
     <div id="uiHats" class="absolute inset-0 hat-bg z-40 hidden flex-col transition-opacity duration-500">
         <header class="w-full p-4 flex justify-between items-center bg-white/50 backdrop-blur-md shadow-sm pointer-events-auto">
             <button class="btnMetaHome clay-card w-12 h-12 flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-200">🏠</button>
-            <div class="bg-white px-4 py-2 rounded-full border-4 border-yellow-300 shadow-md flex items-center gap-2"><span class="text-xl">🌟</span><span class="font-kids text-xl text-yellow-600 metaStarsDisplay">0</span></div>
+            <div class="bg-white px-4 py-2 rounded-full border-4 border-yellow-300 shadow-md flex items-center gap-2">
+                <span class="text-xl">🌟</span>
+                <span class="font-kids text-xl text-yellow-600 metaStarsDisplay">0</span>
+            </div>
         </header>
         <div class="flex-1 overflow-y-auto p-6 pb-24 flex flex-col items-center">
             
@@ -207,17 +303,24 @@
         <header class="w-full p-4 flex justify-between items-start pointer-events-auto">
             <div class="clay-card px-4 py-2 flex flex-col">
                 <span class="font-kids text-pink-500 text-xs md:text-sm" id="hudHpText">NYAWA IDOL</span>
-                <div class="flex gap-1 text-2xl" id="heartContainer"><span class="anim-breathe">❤️</span><span class="anim-breathe" style="animation-delay:0.2s">❤️</span><span class="anim-breathe" style="animation-delay:0.4s">❤️</span></div>
+                <div class="flex gap-1 text-2xl" id="heartContainer">
+                    <span class="anim-breathe">❤️</span><span class="anim-breathe" style="animation-delay: 0.2s">❤️</span><span class="anim-breathe" style="animation-delay: 0.4s">❤️</span>
+                </div>
             </div>
+
             <div class="clay-card px-6 py-2 flex flex-col items-center justify-center bg-yellow-50 border-yellow-200 relative">
                 <span class="font-kids text-yellow-500 text-2xl">🌟 <span id="valScore">0</span></span>
-                <div id="comboBadge" class="absolute -bottom-4 bg-orange-400 text-white text-xs font-kids px-2 py-1 rounded-full shadow-sm opacity-0 transition-opacity">Combo x<span id="valCombo">2</span></div>
+                <div id="comboBadge" class="absolute -bottom-4 bg-orange-400 text-white text-xs font-kids px-2 py-1 rounded-full shadow-sm opacity-0 transition-opacity">
+                    Combo x<span id="valCombo">2</span>
+                </div>
             </div>
+
             <div class="clay-card px-4 py-2 flex flex-col items-end">
                 <span class="font-kids text-cyan-500 text-xs md:text-sm">BABAK</span>
                 <span class="font-kids text-gray-700 text-2xl" id="valLevel">1</span>
             </div>
         </header>
+
         <div class="absolute bottom-4 right-4 flex gap-3 pointer-events-auto">
             <button id="btnMusic" class="clay-card w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-2xl md:text-3xl active:scale-95 transition-transform border-2 border-gray-200">🎵</button>
             <button id="btnHome" class="clay-card w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-2xl md:text-3xl active:scale-95 transition-transform border-2 border-gray-200">🏠</button>
@@ -232,7 +335,7 @@
             <div class="relative w-32 h-44 md:w-56 md:h-72 z-20 anim-breathe mt-4">
                 <div class="stage-platform"></div>
                 <div class="w-full h-full drop-shadow-[0_15px_15px_rgba(0,0,0,0.3)] relative" id="m1PlayerBox">
-                    <img src="https://i.imgur.com/IkLs0pT.png" class="w-full h-full object-contain">
+                    <img src="https://i.imgur.com/IkLs0pT.png" alt="Hunter" class="w-full h-full object-contain">
                     <div class="hat-overlay -top-6" id="m1Hat"></div>
                 </div>
             </div>
@@ -264,18 +367,24 @@
     <!-- MODE 2: MONSTER NYAM-NYAM                      -->
     <!-- ============================================== -->
     <div id="uiMode2" class="absolute inset-0 flex-col z-20 hidden">
-        <div class="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center pointer-events-none">
-            <div class="bg-white/90 backdrop-blur-sm px-6 py-2 rounded-full border-4 border-cyan-300 shadow-md flex items-center gap-2"><span class="font-kids text-gray-500">Makan Supaya Jadi:</span></div>
+        <div class="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center">
+            <div class="bg-white/90 backdrop-blur-sm px-6 py-2 rounded-full border-4 border-cyan-300 shadow-md flex items-center gap-2">
+                <span class="font-kids text-gray-500">Makan Supaya Jadi:</span>
+            </div>
             <div class="text-white text-2xl anim-float">⬇️</div>
         </div>
         <main id="eatPlayArea" class="flex-1 relative w-full h-full overflow-hidden touch-none pt-24">
-            <div id="m2Monster" class="absolute bottom-10 left-1/2 -translate-x-1/2 w-32 h-40 flex flex-col items-center justify-end z-30 touch-none transition-transform">
-                <div class="absolute -top-16 bg-white/90 backdrop-blur-sm px-6 py-2 rounded-2xl border-4 border-pink-400 shadow-lg flex flex-col items-center justify-center z-10 min-w-[80px]">
-                    <span class="font-kids text-xs text-pink-500 -mb-1">Target</span>
-                    <span id="m2TargetText" class="font-kids text-4xl text-pink-600 drop-shadow-sm">10</span>
+            <div id="m2Monster" class="absolute bottom-10 left-1/2 -translate-x-1/2 w-40 h-40 jelly-monster bg-orange-400 flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)]">
+                <div class="absolute top-6 flex gap-8">
+                    <div class="w-4 h-6 bg-black rounded-full anim-blink" id="m2EyeL"><div class="w-2 h-2 bg-white rounded-full mt-1 ml-1"></div></div>
+                    <div class="w-4 h-6 bg-black rounded-full anim-blink" id="m2EyeR"><div class="w-2 h-2 bg-white rounded-full mt-1 ml-1"></div></div>
                 </div>
-                <div class="absolute -top-24 bg-cyan-100 px-3 py-1 rounded-xl font-kids text-sm text-cyan-700 border-2 border-cyan-400 shadow-sm opacity-0 transition-opacity duration-300 whitespace-nowrap z-20" id="m2EatenBubble">Total: <span id="m2CurrentText" class="text-xl">0</span></div>
-                <img src="https://i.imgur.com/gexOR2v.png" alt="Monster Nyam Nyam" class="w-full h-full object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.3)] pointer-events-none">
+                <div class="mt-4 bg-white/30 backdrop-blur-sm w-24 h-24 rounded-full border-4 border-white flex flex-col items-center justify-center shadow-inner">
+                    <span id="m2TargetText" class="font-kids text-5xl text-white drop-shadow-md">10</span>
+                </div>
+                <div class="absolute -top-12 bg-white px-3 py-1 rounded-xl font-kids text-sm text-cyan-600 border-2 border-cyan-200 shadow-sm opacity-0 transition-opacity duration-300" id="m2EatenBubble">
+                    Total: <span id="m2CurrentText" class="text-xl">0</span>
+                </div>
             </div>
             <div id="m2FoodContainer" class="absolute inset-0 pointer-events-none"></div>
         </main>
@@ -286,20 +395,34 @@
     <!-- ============================================== -->
     <div id="uiMode3" class="absolute inset-0 flex-col z-20 hidden">
         <main class="flex-1 relative flex items-center justify-center px-4 pt-20 pb-32">
+            
             <div class="relative w-full max-w-sm flex flex-col items-center mt-10">
                 <div class="cage-platform"></div>
-                <div id="m3Cage" class="cage flex items-end justify-center pb-4 z-10 transition-all duration-300"><div id="m3Animal" class="cage-animal">🐶</div></div>
-                <div id="m3Padlock" class="padlock z-20 transition-all duration-300">
-                    <div class="w-10 h-10 bg-gray-800 rounded-full flex flex-col items-center justify-center shadow-inner"><div class="w-2 h-4 bg-gray-900 rounded-sm"></div><div class="w-4 h-4 bg-gray-900 rounded-full -mt-2"></div></div>
+                <!-- Cage -->
+                <div id="m3Cage" class="cage flex items-end justify-center pb-4 z-10 transition-all duration-300">
+                    <div id="m3Animal" class="cage-animal">🐶</div>
                 </div>
+                
+                <!-- Lock Pad -->
+                <div id="m3Padlock" class="padlock z-20 transition-all duration-300">
+                    <div class="w-10 h-10 bg-gray-800 rounded-full flex flex-col items-center justify-center shadow-inner">
+                        <div class="w-2 h-4 bg-gray-900 rounded-sm"></div>
+                        <div class="w-4 h-4 bg-gray-900 rounded-full -mt-2"></div>
+                    </div>
+                </div>
+
+                <!-- Puzzle Display -->
                 <div class="absolute -top-16 w-full flex justify-center z-30">
                     <div class="clay-card py-3 px-6 border-4 border-yellow-200 bg-white" id="m3QBox">
-                        <p id="m3Instruction" class="text-center font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">Isi Angka Hilang!</p>
+                        <p id="m3Instruction" class="text-center font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">Isi Angka yang Hilang!</p>
                         <span id="m3Question" class="font-kids text-4xl text-cyan-500 drop-shadow-sm transition-all duration-300 text-center block">2, 4, ?, 8</span>
                     </div>
                 </div>
+
             </div>
+
         </main>
+
         <footer class="w-full absolute bottom-0 pb-6 md:pb-8 pt-4 px-4 z-30">
             <div class="max-w-3xl mx-auto grid grid-cols-3 gap-3 md:gap-8 pr-16" id="m3Grid"></div>
         </footer>
@@ -310,7 +433,10 @@
     <!-- ============================================== -->
     <div id="uiMode4" class="absolute inset-0 flex-col z-20 hidden market-bg">
         <div class="market-awning w-full absolute top-0 z-10"></div>
+        
         <main class="flex-1 relative flex flex-col items-center pt-20 pb-32 px-4 overflow-y-auto">
+            
+            <!-- Cashier & Interaction -->
             <div class="flex items-end justify-center gap-2 mb-4 w-full max-w-md mt-4">
                 <div class="text-7xl anim-breathe" id="m4CashierEmoji">🍎</div>
                 <div class="clay-card p-4 relative border-4 border-pink-200" id="m4SpeechBubble">
@@ -319,16 +445,22 @@
                     <div id="m4TargetList" class="flex gap-2 mt-1 text-2xl font-bold font-kids text-gray-700"></div>
                 </div>
             </div>
+
+            <!-- SHOP PHASE -->
             <div id="m4ShopPhase" class="w-full max-w-md flex flex-col gap-6">
-                <div class="market-shelf p-4"><div class="flex justify-around gap-2" id="m4ShelfContainer"></div></div>
+                <div class="market-shelf p-4">
+                    <div class="flex justify-around gap-2" id="m4ShelfContainer"></div>
+                </div>
                 <div class="clay-card p-4 border-4 border-orange-200 bg-orange-50 mt-4 relative">
-                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-orange-400 text-white font-kids px-4 py-1 rounded-full border-2 border-white shadow-md text-sm">🛒 Keranjangmu</div>
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-orange-400 text-white font-kids px-4 py-1 rounded-full border-2 border-white shadow-md text-sm whitespace-nowrap">🛒 Keranjangmu</div>
                     <div id="m4CartContainer" class="flex flex-wrap justify-center gap-2 text-3xl min-h-[45px] mt-2"></div>
                 </div>
             </div>
+
+            <!-- PAY PHASE -->
             <div id="m4PayPhase" class="w-full max-w-md hidden flex-col items-center gap-6 mt-4">
                 <div class="clay-card p-6 border-4 border-green-300 bg-green-50 text-center w-full relative">
-                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-green-500 text-white font-kids px-4 py-1 rounded-full border-2 border-white shadow-md text-sm">Kasir</div>
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-green-500 text-white font-kids px-4 py-1 rounded-full border-2 border-white shadow-md text-sm whitespace-nowrap">Mesin Kasir</div>
                     <p class="font-kids text-green-700 text-lg mb-1 mt-2">Total Harga:</p>
                     <p class="font-kids text-4xl text-pink-500 drop-shadow-sm mb-4"><span id="m4TargetPrice">0</span> 🪙</p>
                     <div class="bg-white rounded-xl p-2 border-2 border-gray-200">
@@ -336,13 +468,17 @@
                         <p class="font-kids text-2xl text-yellow-500"><span id="m4PaidAmount">0</span> 🪙</p>
                     </div>
                 </div>
+                
                 <div class="flex justify-center gap-6 mt-4 w-full pb-8">
                     <button class="coin-btn" onclick="Mode4.addCoin(1)">1</button>
                     <button class="coin-btn" onclick="Mode4.addCoin(2)">2</button>
                     <button class="coin-btn" onclick="Mode4.addCoin(5)">5</button>
                 </div>
             </div>
+
         </main>
+        
+        <!-- Idol Character decorative in Market -->
         <div class="absolute bottom-4 left-2 w-24 h-32 z-30 pointer-events-none">
             <div class="w-full h-full relative anim-breathe drop-shadow-lg">
                 <img src="https://i.imgur.com/IkLs0pT.png" class="w-full h-full object-contain">
@@ -407,6 +543,7 @@
                 osc.connect(gain); gain.connect(dest); osc.start(); osc.stop(ctx.currentTime + dur);
             }
             
+            // Basic sound helpers
             function playDrum(isKick) { if(isMuted||!ctx) return; const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.setValueAtTime(isKick?100:300,ctx.currentTime); o.frequency.exponentialRampToValueAtTime(0.01,ctx.currentTime+(isKick?0.3:0.1)); g.gain.setValueAtTime(1,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+(isKick?0.3:0.1)); o.connect(g); g.connect(bgmNode); o.start(); o.stop(ctx.currentTime+0.3); }
             function createVinyl() { if(!ctx) return; const bs=ctx.sampleRate*2, buf=ctx.createBuffer(1,bs,ctx.sampleRate), d=buf.getChannelData(0); for(let i=0;i<bs;i++) d[i]=(Math.random()*2-1)*0.015; vinylSource=ctx.createBufferSource(); vinylSource.buffer=buf; vinylSource.loop=true; vinylSource.connect(bgmNode); if(!isMuted) vinylSource.start(); }
 
@@ -541,7 +678,9 @@
                     Array.from(zooGrid.children).forEach(el => {
                         if(!el.classList.contains('locked')) { el.classList.remove('anim-breathe'); el.classList.add('anim-jump'); setTimeout(()=>{el.classList.remove('anim-jump'); el.classList.add('anim-breathe');},500); }
                     });
-                } else AudioSys.m1Wrong();
+                } else {
+                    AudioSys.m1Wrong();
+                }
             };
 
             return { openZoo, openHats, closeAll };
@@ -596,9 +735,14 @@
 
             function updateHats() {
                 const hat = StorageController.getEqHat();
-                document.getElementById('menuHat').innerText = hat;
-                document.getElementById('m1Hat').innerText = hat;
-                document.getElementById('m4Hat').innerText = hat;
+                // Ensure elements exist before setting innerText
+                const mHat = document.getElementById('menuHat');
+                const m1Hat = document.getElementById('m1Hat');
+                const m4Hat = document.getElementById('m4Hat');
+                
+                if (mHat) mHat.innerText = hat;
+                if (m1Hat) m1Hat.innerText = hat;
+                if (m4Hat) m4Hat.innerText = hat;
             }
 
             function startSeq() {
@@ -671,48 +815,162 @@
             }
         })();
 
-        // MODE 2 (Monster Nyam-Nyam)
+        // MODE 2
         const Mode2 = (function(){
-            const DOM = { a:document.getElementById('eatPlayArea'), m:document.getElementById('m2Monster'), f:document.getElementById('m2FoodContainer'), tt:document.getElementById('m2TargetText'), tc:document.getElementById('m2CurrentText'), b:document.getElementById('m2EatenBubble') };
-            let st={}; let ply=false, fds=[], lid, tmr, mx=window.innerWidth/2;
-            
-            function hM(e){if(!ply)return; mx=Math.max(64,Math.min(window.innerWidth-64, e.touches?e.touches[0].clientX:e.clientX)); DOM.m.style.transform=`translateX(-50%)`; DOM.m.style.left=`${mx}px`;}
-            
-            return {
-                start: () => { 
-                    st={h:3,s:0,l:1,c:0,t:10,cur:0}; MainCtrl.updateSharedHUD(3,0,1,0); 
-                    DOM.m.className=`absolute bottom-10 left-1/2 w-32 h-40 flex flex-col items-center justify-end z-30 touch-none transition-transform`; 
-                    DOM.m.style.transform=`translateX(-50%)`; DOM.a.addEventListener('touchmove',hM,{passive:false}); DOM.a.addEventListener('mousemove',hM); 
-                    ply=true; fds=[]; DOM.f.innerHTML=''; nT(); loop(); spwn(); 
-                },
-                stop: () => { ply=false; cancelAnimationFrame(lid); clearTimeout(tmr); DOM.a.removeEventListener('touchmove',hM); DOM.a.removeEventListener('mousemove',hM); }
+            const DOM = { 
+                a: document.getElementById('eatPlayArea'), 
+                m: document.getElementById('m2Monster'), 
+                f: document.getElementById('m2FoodContainer'), 
+                tt: document.getElementById('m2TargetText'), 
+                tc: document.getElementById('m2CurrentText'), 
+                b: document.getElementById('m2EatenBubble') 
             };
+            let st = {}; 
+            let ply = false, fds = [], lid, tmr, mx = window.innerWidth / 2;
             
-            function nT(){ st.cur=0; DOM.tc.innerText=0; DOM.b.classList.replace('opacity-100','opacity-0'); st.t=5+Math.floor(st.l*1.5)+Math.floor(Math.random()*5); DOM.tt.innerText=st.t; }
-            function spwn(){ if(!ply)return; const fd=document.createElement('div'); fd.className='falling-food'; let v, nd=st.t-st.cur; if(nd<=0)return; if(Math.random()>0.4&&nd<=10)v=nd; else if(Math.random()>0.5)v=Math.floor(Math.random()*(nd-1))+1; else v=nd+Math.floor(Math.random()*5)+1; fd.innerText=v; const x=Math.random()*(window.innerWidth-60); fd.style.left=`${x}px`; fd.style.top=`-60px`; DOM.f.appendChild(fd); fds.push({e:fd,x:x,y:-60,v:v,s:2+(st.l*0.5)+Math.random()*2}); tmr=setTimeout(spwn, Math.max(800,2000-(st.l*100))+Math.random()*500); }
-            function loop(){ if(!ply)return; const mr=DOM.m.getBoundingClientRect(), cx=mr.left+mr.width/2, cy=mr.top+mr.height/2; for(let i=fds.length-1;i>=0;i--){let f=fds[i]; f.y+=f.s; f.e.style.transform=`translateY(${f.y}px)`; if(Math.hypot(cx-(f.x+30),cy-(f.y+30))<60){f.e.remove();fds.splice(i,1);hC(f.v,cx,cy-40);} else if(f.y>window.innerHeight){f.e.remove();fds.splice(i,1);}} lid=requestAnimationFrame(loop); }
+            function hM(e) {
+                if(!ply) return; 
+                let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                mx = Math.max(80, Math.min(window.innerWidth - 80, clientX)); 
+                DOM.m.style.transform = `translateX(-50%)`; 
+                DOM.m.style.left = `${mx}px`;
+            }
+
+            function start() { 
+                st = {h:3, s:0, l:1, c:0, t:10, cur:0}; 
+                MainCtrl.updateSharedHUD(3, 0, 1, 0); 
+                DOM.m.className = `absolute bottom-10 left-1/2 w-40 h-40 jelly-monster ${MainCtrl.randColor()} flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)]`; 
+                DOM.m.style.transform = `translateX(-50%)`; 
+                DOM.a.addEventListener('touchmove', hM, {passive: false}); 
+                DOM.a.addEventListener('mousemove', hM); 
+                ply = true; 
+                fds = []; 
+                DOM.f.innerHTML = ''; 
+                nT(); 
+                loop(); 
+                spwn(); 
+            }
+
+            function stop() { 
+                ply = false; 
+                cancelAnimationFrame(lid); 
+                clearTimeout(tmr); 
+                DOM.a.removeEventListener('touchmove', hM); 
+                DOM.a.removeEventListener('mousemove', hM); 
+            }
             
-            function hC(v,x,y){ 
-                st.cur+=v; DOM.tc.innerText=st.cur; DOM.b.classList.replace('opacity-0','opacity-100'); 
-                if(st.cur===st.t){ 
-                    AudioSys.m2Eat(); st.s+=20; st.c++; st.l++; MainCtrl.updateSharedHUD(st.h,st.s,st.l,st.c); 
-                    DOM.m.style.transform='scale(1.2) translateX(-50%)'; 
-                    FX.burst(x,y,40); FX.text(x,y-50,"NYAM!",'#4ECDC4'); 
-                    fds.forEach(f=>f.e.remove()); fds=[]; 
-                    setTimeout(()=>{DOM.m.style.transform='translateX(-50%)'; DOM.m.className=`absolute bottom-10 left-1/2 w-32 h-40 flex flex-col items-center justify-end z-30 touch-none transition-transform`; nT();},500); 
-                } else if(st.cur>st.t){ 
-                    AudioSys.m2Burp(); st.h--; st.c=0; MainCtrl.updateSharedHUD(st.h,st.s,st.l,st.c); 
+            function nT() { 
+                st.cur = 0; 
+                DOM.tc.innerText = 0; 
+                DOM.b.classList.replace('opacity-100', 'opacity-0'); 
+                st.t = 5 + Math.floor(st.l * 1.5) + Math.floor(Math.random() * 5); 
+                DOM.tt.innerText = st.t; 
+            }
+
+            function spwn() { 
+                if(!ply) return; 
+                const fd = document.createElement('div'); 
+                fd.className = 'falling-food'; 
+                let v, nd = st.t - st.cur; 
+                if(nd <= 0) return; 
+                
+                if (Math.random() > 0.4 && nd <= 10) v = nd; 
+                else if (Math.random() > 0.5) v = Math.floor(Math.random() * (nd - 1)) + 1; 
+                else v = nd + Math.floor(Math.random() * 5) + 1; 
+                
+                fd.innerText = v; 
+                
+                const areaWidth = DOM.a.offsetWidth > 0 ? DOM.a.offsetWidth : window.innerWidth;
+                const x = 30 + Math.random() * (areaWidth - 90); 
+                
+                fd.style.left = `${x}px`; 
+                fd.style.top = `-60px`; 
+                DOM.f.appendChild(fd); 
+                
+                fds.push({e: fd, x: x, y: -60, v: v, s: 2 + (st.l * 0.5) + Math.random() * 2}); 
+                tmr = setTimeout(spwn, Math.max(800, 2000 - (st.l * 100)) + Math.random() * 500); 
+            }
+
+            function loop() { 
+                if(!ply) return; 
+                const mr = DOM.m.getBoundingClientRect();
+                const cx = mr.left + mr.width / 2;
+                const cy = mr.top + mr.height / 2; 
+                
+                for(let i = fds.length - 1; i >= 0; i--) {
+                    let f = fds[i]; 
+                    f.y += f.s; 
+                    f.e.style.transform = `translateY(${f.y}px)`; 
+                    
+                    const fr = f.e.getBoundingClientRect();
+                    const fx = fr.left + fr.width / 2;
+                    const fy = fr.top + fr.height / 2;
+
+                    if (Math.hypot(cx - fx, cy - fy) < 60) {
+                        f.e.remove();
+                        fds.splice(i, 1);
+                        hC(f.v, cx, cy - 40);
+                    } else if (f.y > window.innerHeight) {
+                        f.e.remove();
+                        fds.splice(i, 1);
+                    }
+                } 
+                lid = requestAnimationFrame(loop); 
+            }
+            
+            function hC(v, x, y) { 
+                st.cur += v; 
+                DOM.tc.innerText = st.cur; 
+                DOM.b.classList.replace('opacity-0', 'opacity-100'); 
+                
+                if (st.cur === st.t) { 
+                    AudioSys.m2Eat(); 
+                    st.s += 20; 
+                    st.c++; 
+                    st.l++; 
+                    MainCtrl.updateSharedHUD(st.h, st.s, st.l, st.c); 
+                    DOM.m.style.transform = 'scale(1.2) translateX(-50%)'; 
+                    FX.burst(x, y, 40); 
+                    FX.text(x, y - 50, "NYAM!", '#4ECDC4'); 
+                    
+                    fds.forEach(f => f.e.remove()); 
+                    fds = []; 
+                    
+                    setTimeout(() => {
+                        DOM.m.style.transform = 'translateX(-50%)'; 
+                        DOM.m.className = `absolute bottom-10 left-1/2 w-40 h-40 jelly-monster ${MainCtrl.randColor()} flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)]`; 
+                        nT();
+                    }, 500); 
+                } else if (st.cur > st.t) { 
+                    AudioSys.m2Burp(); 
+                    st.h--; 
+                    st.c = 0; 
+                    MainCtrl.updateSharedHUD(st.h, st.s, st.l, st.c); 
                     DOM.m.classList.add('anim-shake'); 
-                    FX.smoke(x,y,20); FX.text(x,y-50,"KEKENYANGAN!",'#FF6B6B'); 
-                    setTimeout(()=>DOM.m.classList.remove('anim-shake'),400); 
-                    if(st.h<=0){ply=false;MainCtrl.gameOver(st.s,2);} else{fds.forEach(f=>f.e.remove());fds=[];nT();} 
-                } else{ 
-                    AudioSys.sfxCount(); DOM.m.style.transform='scale(1.05) translateX(-50%)'; setTimeout(()=>DOM.m.style.transform='translateX(-50%)',100); 
+                    FX.smoke(x, y, 20); 
+                    FX.text(x, y - 50, "KEKENYANGAN!", '#FF6B6B'); 
+                    
+                    setTimeout(() => DOM.m.classList.remove('anim-shake'), 400); 
+                    
+                    if (st.h <= 0) {
+                        ply = false;
+                        MainCtrl.gameOver(st.s, 2);
+                    } else {
+                        fds.forEach(f => f.e.remove());
+                        fds = [];
+                        nT();
+                    } 
+                } else { 
+                    AudioSys.sfxCount(); 
+                    DOM.m.style.transform = 'scale(1.05) translateX(-50%)'; 
+                    setTimeout(() => DOM.m.style.transform = 'translateX(-50%)', 100); 
                 } 
             }
+
+            return { start: start, stop: stop };
         })();
 
-        // MODE 3 (Detektif Angka)
+        // MODE 3
         const Mode3 = (function(){
             const DOM = { c:document.getElementById('m3Cage'), a:document.getElementById('m3Animal'), p:document.getElementById('m3Padlock'), i:document.getElementById('m3Instruction'), q:document.getElementById('m3Question'), g:document.getElementById('m3Grid') };
             let st; const C = ['cyan','yellow','pink'];
