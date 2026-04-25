@@ -33,11 +33,13 @@
             touch-action: none;
         }
 
-        /* --- CUSTOM SCROLLBAR --- */
+        /* --- CUSTOM SCROLLBAR & TOUCH FIX --- */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.4); }
+        
+        .overflow-y-auto { touch-action: pan-y !important; overscroll-behavior-y: contain; }
 
         .font-kids { font-family: 'Fredoka One', cursive; }
 
@@ -112,7 +114,8 @@
         /* --- MONSTERS & PROPS --- */
         .jelly-monster {
             border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; animation: amoebaMorph 4s ease-in-out infinite alternate;
-            box-shadow: inset 15px 15px 25px rgba(255,255,255,0.5), inset -15px -15px 25px rgba(0,0,0,0.3), 0 20px 30px rgba(0,0,0,0.2);
+            box-shadow: inset 15px 15px 25px rgba(255,255,255,0.5), inset -15px -15px 25px rgba(0,0,0,0.3), 0 20px 30px rgba(0,0,0,0.2); transition: background-color 0.5s ease, transform 0.3s;
+            will-change: transform;
         }
         @keyframes amoebaMorph { 0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; } 50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; } 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; } }
 
@@ -364,7 +367,7 @@
     <!-- META: HATS SCREEN                              -->
     <!-- ============================================== -->
     <div id="uiHats" class="absolute inset-0 hat-bg z-40 hidden flex-col transition-opacity duration-500">
-        <header class="w-full p-4 flex justify-between items-center bg-white/50 backdrop-blur-md shadow-sm pointer-events-auto">
+        <header class="w-full p-4 flex justify-between items-center bg-white/50 backdrop-blur-md shadow-sm pointer-events-auto shrink-0">
             <button class="btnMetaHome clay-card w-12 h-12 flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-200">🏠</button>
             <div class="bg-white px-4 py-2 rounded-full border-4 border-yellow-300 shadow-md flex items-center gap-2">
                 <span class="text-xl">🌟</span>
@@ -399,7 +402,7 @@
                 <span class="font-kids text-gray-700 text-2xl" id="valLevel">1</span>
             </div>
         </header>
-        <div class="absolute bottom-4 right-4 flex gap-3 pointer-events-auto">
+        <div class="absolute bottom-4 right-4 flex flex-col gap-3 pointer-events-auto">
             <button id="btnSave" class="clay-card w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-2xl md:text-3xl active:scale-95 transition-transform border-2 border-green-300 bg-green-100 cursor-pointer">💾</button>
             <button id="btnMusic" class="clay-card w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-2xl md:text-3xl active:scale-95 transition-transform border-2 border-gray-200 cursor-pointer">🎵</button>
             <button id="btnHome" class="clay-card w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-2xl md:text-3xl active:scale-95 transition-transform border-2 border-gray-200 cursor-pointer">🏠</button>
@@ -502,10 +505,10 @@
     <!-- ============================================== -->
     <!-- MODE 4: PASAR AJAIB (SHOPPING)                 -->
     <!-- ============================================== -->
-    <div id="uiMode4" class="absolute inset-0 flex-col z-20 hidden market-bg">
+    <div id="uiMode4" class="absolute inset-0 flex-col z-20 hidden market-bg overflow-y-auto">
         <div class="market-awning w-full absolute top-0 z-10"></div>
         
-        <main class="flex-1 relative flex flex-col items-center pt-20 pb-32 px-4 overflow-y-auto">
+        <main class="flex-1 relative flex flex-col items-center pt-20 pb-32 px-4">
             <div class="flex items-end justify-center gap-2 mb-4 w-full max-w-md mt-4">
                 <div class="text-7xl anim-breathe" id="m4CashierEmoji">🍎</div>
                 <div class="clay-card p-4 relative border-4 border-pink-200" id="m4SpeechBubble">
@@ -539,6 +542,7 @@
                 </div>
                 
                 <div class="flex justify-center gap-4 mt-4 w-full pb-8">
+                    <!-- Koin bentuk membulat sesuai request -->
                     <button class="coin-btn" onclick="Mode4.addCoin(1)">🪙 1</button>
                     <button class="coin-btn" onclick="Mode4.addCoin(2)">🪙 2</button>
                     <button class="coin-btn" onclick="Mode4.addCoin(5)">🪙 5</button>
