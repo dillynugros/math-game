@@ -92,7 +92,7 @@
             border: 4px solid #fff;
         }
 
-        .clay-btn { border-radius: 25px; position: relative; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translateY(0); }
+        .clay-btn { border-radius: 25px; position: relative; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translateY(0); cursor: pointer; }
         .clay-btn.pink { background: #FF6B6B; box-shadow: inset 2px 2px 5px rgba(255,255,255,0.4), inset -2px -5px 5px rgba(0,0,0,0.1), 0 8px 0 #D94545, 0 15px 15px rgba(255,107,107,0.4); border: 2px solid #FF8E8E; }
         .clay-btn.cyan { background: #4ECDC4; box-shadow: inset 2px 2px 5px rgba(255,255,255,0.4), inset -2px -5px 5px rgba(0,0,0,0.1), 0 8px 0 #2A9D94, 0 15px 15px rgba(78,205,196,0.4); border: 2px solid #7DE5DE; }
         .clay-btn.yellow { background: #FFE66D; color: #D38C00; box-shadow: inset 2px 2px 5px rgba(255,255,255,0.8), inset -2px -5px 5px rgba(0,0,0,0.1), 0 8px 0 #D4B22B, 0 15px 15px rgba(255,230,109,0.4); border: 2px solid #FFF1A3; }
@@ -107,6 +107,7 @@
         .jelly-monster {
             border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; animation: amoebaMorph 4s ease-in-out infinite alternate;
             box-shadow: inset 15px 15px 25px rgba(255,255,255,0.5), inset -15px -15px 25px rgba(0,0,0,0.3), 0 20px 30px rgba(0,0,0,0.2); transition: background-color 0.5s ease, transform 0.3s;
+            will-change: transform;
         }
         @keyframes amoebaMorph { 0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; } 50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; } 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; } }
 
@@ -151,54 +152,132 @@
         .animal-pen, .hat-slot {
             background: rgba(255,255,255,0.7); border: 4px solid #fff; border-radius: 20px;
             height: 80px; display: flex; align-items: center; justify-content: center; font-size: 40px;
-            box-shadow: inset 0 5px 10px rgba(0,0,0,0.05); position: relative; transition: transform 0.2s;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.05); position: relative; transition: transform 0.2s, border-color 0.2s;
         }
-        .animal-pen.locked { filter: grayscale(1); opacity: 0.5; font-size: 30px; color: #94a3b8; font-family: 'Fredoka One'; }
+        .animal-pen.selected { border-color: #FF6B6B; background: #FFF0F5; box-shadow: 0 0 15px rgba(255,107,107,0.5); }
+        .animal-pen-text { transition: font-size 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); display: inline-block; }
+        .animal-pen.locked { filter: grayscale(1); opacity: 0.5; font-size: 30px; color: #94a3b8; font-family: 'Fredoka One'; cursor: default; }
         .hat-slot { cursor: pointer; } .hat-slot:active { transform: scale(0.95); }
         .hat-slot.equipped { border-color: #FF6B6B; background: #FFF0F5; box-shadow: 0 0 15px rgba(255,107,107,0.5); }
         .hat-slot.locked { filter: grayscale(1) opacity(0.5); font-size: 20px; }
         .hat-slot.locked::after { content: '🔒 15 🌟'; position: absolute; bottom: -15px; background: #FF6B6B; color: white; font-family: 'Fredoka One'; font-size: 12px; padding: 2px 8px; border-radius: 10px; border: 2px solid white; white-space: nowrap; }
+
+        /* --- HAT OVERLAY --- */
+        .hat-overlay { position: absolute; left: 50%; transform: translateX(-50%) rotate(-5deg); z-index: 10; font-size: 3.5rem; transition: all 0.3s; pointer-events: none; }
+
+        /* --- MODE 4: SHOPPING MARKET --- */
+        .market-bg { background: #FFF3E0; }
+        .market-awning { height: 30px; background: repeating-linear-gradient(90deg, #FF6B6B, #FF6B6B 40px, #FFF 40px, #FFF 80px); box-shadow: 0 5px 10px rgba(0,0,0,0.1); border-bottom: 4px solid #D94545; }
+        .market-shelf { background: #D2691E; border-radius: 10px; border-bottom: 10px solid #8B4513; box-shadow: 0 10px 15px rgba(0,0,0,0.2); position: relative; }
+        .shelf-item-btn { background: rgba(255,255,255,0.9); border: 4px solid #FFF; border-radius: 15px; font-size: 40px; width: 70px; height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 5px 0 #CD853F; transition: transform 0.1s, box-shadow 0.1s; position: relative; }
+        .shelf-item-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #CD853F; }
+        .price-tag { position: absolute; bottom: -10px; right: -10px; background: #FFE66D; color: #8B6508; font-size: 14px; padding: 2px 6px; border-radius: 10px; border: 2px solid #FFF; font-family: 'Fredoka One'; box-shadow: 0 2px 2px rgba(0,0,0,0.2); }
+        .coin-btn { width: 90px; height: 80px; background: radial-gradient(circle at 30% 30%, #FFDF00, #B8860B); border-radius: 15px; border: 4px solid #FFF; box-shadow: 0 8px 0 #8B6508, 0 15px 15px rgba(0,0,0,0.2); color: #8B6508; font-family: 'Fredoka One'; font-size: 28px; text-shadow: 1px 1px 0 rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.1s; cursor: pointer; }
+        .coin-btn:active { transform: translateY(8px); box-shadow: 0 0 0 #8B6508; }
+
+        /* --- MODE 5: BALLOONS --- */
+        .m5-bg { background: linear-gradient(180deg, #38bdf8 0%, #bae6fd 100%); }
+        .balloon {
+            width: 100px; height: 120px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            position: relative; cursor: pointer;
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+            padding: 10px; gap: 2px;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2), inset 10px 10px 20px rgba(255,255,255,0.5);
+            transition: transform 0.1s;
+        }
+        .balloon:active { transform: scale(0.9); }
+        .balloon::after {
+            content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
+            border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 12px solid currentColor;
+        }
+        .balloon-string {
+            position: absolute; bottom: -60px; left: 50%; width: 2px; height: 50px; background: rgba(255,255,255,0.6);
+        }
+        .star-icon { font-size: 18px; line-height: 1; filter: drop-shadow(1px 1px 0px rgba(0,0,0,0.3)); }
+
+        /* --- MODE 6: ROBOTS --- */
+        .m6-bg { background: linear-gradient(180deg, #1e293b 0%, #334155 100%); }
+        .robot-container { position: relative; display: flex; flex-direction: column; align-items: center; z-index: 20; }
+        .robot-body {
+            width: 80px; height: 90px; background: #e2e8f0; border: 4px solid #94a3b8; border-radius: 15px;
+            display: flex; justify-content: center; align-items: center; position: relative;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1), 0 10px 15px rgba(0,0,0,0.3);
+        }
+        .robot-head {
+            width: 60px; height: 45px; background: #cbd5e1; border: 4px solid #94a3b8; border-radius: 10px;
+            position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .robot-head::before {
+            content: ''; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 15px; background: #94a3b8;
+        }
+        .robot-head::after {
+            content: ''; position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+            width: 10px; height: 10px; background: #ef4444; border-radius: 50%;
+        }
+        .robot-eye { width: 12px; height: 12px; background: #0ea5e9; border-radius: 50%; box-shadow: 0 0 5px #0ea5e9; }
+        .robot-screen {
+            width: 60px; height: 60px; background: #0f172a; border: 3px solid #475569; border-radius: 8px;
+            display: flex; justify-content: center; align-items: center;
+            color: #38bdf8; font-size: 32px; font-family: 'Fredoka One'; text-shadow: 0 0 10px #38bdf8;
+            box-shadow: inset 0 0 10px rgba(14,165,233,0.5);
+        }
+        .m6-box {
+            width: 130px; min-height: 130px; background: rgba(255,255,255,0.9); border: 6px dashed #fbbf24; border-radius: 20px;
+            display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 4px; padding: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3); z-index: 20; position: relative;
+        }
+        .m6-item { font-size: 26px; line-height: 1; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2)); }
 
         #fx-canvas { position: absolute; inset: 0; pointer-events: none; z-index: 100; }
     </style>
 </head>
 <body id="gameBody">
 
-    <!-- Scenery -->
-    <div class="spotlight spotlight-1"></div>
-    <div class="spotlight spotlight-2"></div>
+    <!-- Scenery Base -->
     <div class="stage-floor" id="bgFloor"></div>
 
-    <!-- FX Canvas -->
+    <!-- FX Canvas (Highest Layer for Particles) -->
     <canvas id="fx-canvas"></canvas>
 
     <!-- ============================================== -->
     <!-- START SCREEN                                   -->
     <!-- ============================================== -->
     <div id="uiStart" class="absolute inset-0 flex flex-col items-center justify-center z-50 bg-white/60 backdrop-blur-md transition-opacity duration-500 overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none">
-            <div class="absolute top-10 left-[10%] text-5xl anim-float text-pink-400 font-kids opacity-70">🎵</div>
-            <div class="absolute top-[20%] right-[15%] text-6xl anim-breathe text-cyan-400 font-kids opacity-70">➕</div>
-            <div class="absolute bottom-[30%] left-[15%] text-6xl anim-float text-yellow-400 font-kids opacity-70" style="animation-delay: -1s">➖</div>
-            <div class="absolute bottom-[15%] right-[10%] text-5xl anim-breathe text-purple-400 font-kids opacity-70" style="animation-delay: -2s">⭐</div>
-            <div class="absolute top-[40%] left-[5%] text-4xl anim-float text-red-400 font-kids opacity-60" style="animation-delay: -1.5s">💖</div>
-        </div>
-
-        <!-- Global Stars Display -->
+        
+        <!-- Stars Status -->
         <div class="absolute top-6 left-6 bg-yellow-50 px-4 py-2 rounded-full border-4 border-yellow-300 shadow-md flex items-center gap-2 z-20">
             <span class="text-2xl anim-breathe">🌟</span>
             <span class="font-kids text-xl text-yellow-600" id="uiGlobalStars">0</span>
         </div>
 
-        <div class="clay-card p-6 md:p-10 text-center max-w-md w-11/12 relative z-10 max-h-[90vh] overflow-y-auto">
-            
-            <h1 class="font-kids text-4xl md:text-5xl text-pink-500 drop-shadow-sm mb-2 mt-2 leading-tight">
-                BELAJAR<br><span class="text-cyan-400">MATEMATIKA</span>
-            </h1>
-            <p class="text-gray-500 font-bold mb-4">Pilih Petualanganmu!</p>
+        <!-- Background Math Ornaments -->
+        <div class="absolute inset-0 pointer-events-none">
+            <div class="absolute top-10 left-[10%] text-5xl anim-float text-pink-400 font-kids opacity-70">1️⃣</div>
+            <div class="absolute top-[20%] right-[15%] text-6xl anim-breathe text-cyan-400 font-kids opacity-70">➕</div>
+            <div class="absolute bottom-[30%] left-[15%] text-6xl anim-float text-yellow-400 font-kids opacity-70" style="animation-delay: -1s">➖</div>
+            <div class="absolute bottom-[15%] right-[10%] text-5xl anim-breathe text-purple-400 font-kids opacity-70" style="animation-delay: -2s">2️⃣</div>
+            <div class="absolute top-[40%] left-[5%] text-4xl anim-float text-red-400 font-kids opacity-60" style="animation-delay: -1.5s">✖️</div>
+            <div class="absolute top-[50%] right-[8%] text-5xl anim-jump text-green-400 font-kids opacity-60" style="animation-delay: -0.5s">➗</div>
+            <div class="absolute bottom-[10%] left-[40%] text-6xl anim-float text-blue-400 font-kids opacity-70" style="animation-delay: -2.5s">3️⃣</div>
+            <div class="absolute top-[15%] left-[45%] text-5xl anim-breathe text-orange-400 font-kids opacity-70" style="animation-delay: -0.8s">🟰</div>
+        </div>
 
-            <!-- TAMPILAN BUTTON MEMANJANG VERTIKAL SEPERTI PERMINTAAN -->
-            <div class="flex flex-col gap-3">
+        <!-- Main Menu Panel -->
+        <div class="clay-card p-6 md:p-8 text-center max-w-md w-11/12 relative z-10 max-h-[95vh] overflow-y-auto flex flex-col items-center">
+            
+            <div id="menuHat" style="display:none;"></div>
+
+            <h1 class="font-kids text-4xl md:text-5xl text-pink-500 drop-shadow-sm mb-2 mt-4 leading-tight">
+                BELAJAR <br><span class="text-cyan-400">MATEMATIKA</span>
+            </h1>
+
+            <p class="font-kids text-lg text-gray-500 mb-6 pulse-text">Pilih Petualanganmu!</p>
+
+            <!-- Mode Selection Grid (Vertikal) -->
+            <div class="flex flex-col gap-3 w-full mb-4">
                 <button id="btnStartMode1" class="clay-btn pink text-white font-kids text-lg py-3 px-4 w-full flex justify-between items-center pop-in">
                     <span>🎮 Pemburu Nada</span><span class="text-xs bg-black/20 px-2 rounded-full" id="h1">0</span>
                 </button>
@@ -211,35 +290,40 @@
                 <button id="btnStartMode4" class="clay-btn orange text-white font-kids text-lg py-3 px-4 w-full flex justify-between items-center pop-in" style="animation-delay: 0.3s">
                     <span>🛒 Pasar Ajaib</span><span class="text-xs bg-black/20 px-2 rounded-full" id="h4">0</span>
                 </button>
-                
-                <hr class="border-gray-200 my-2">
-                
-                <button id="btnZoo" class="clay-btn purple text-white font-kids text-xl py-3 px-4 w-full flex items-center justify-center gap-2 pulse-text">
-                    <span>🦁 Kebun Binatang</span>
+                <button id="btnStartMode5" class="clay-btn cyan text-white font-kids text-lg py-3 px-4 w-full flex justify-between items-center pop-in" style="animation-delay: 0.4s">
+                    <span>🎈 Pop Balon!</span><span class="text-xs bg-black/20 px-2 rounded-full" id="h5">0</span>
                 </button>
-                <button id="btnHats" class="clay-btn cyan text-white font-kids text-xl py-3 px-4 w-full flex items-center justify-center gap-2 pop-in" style="animation-delay: 0.1s">
-                    <span>🎩 Toko Topi</span>
+                <button id="btnStartMode6" class="clay-btn purple text-white font-kids text-lg py-3 px-4 w-full flex justify-between items-center pop-in" style="animation-delay: 0.5s">
+                    <span>🤖 Robot Cocok</span><span class="text-xs bg-black/20 px-2 rounded-full" id="h6">0</span>
                 </button>
+                
+                <hr class="border-gray-200 w-full my-1">
+                
+                <!-- Meta Games -->
+                <div class="flex w-full gap-3">
+                    <button id="btnZoo" class="clay-btn green text-white font-kids text-sm md:text-base py-3 flex-1 flex items-center justify-center gap-2">🦁 Zoo</button>
+                    <button id="btnHats" class="clay-btn pink text-white font-kids text-sm md:text-base py-3 flex-1 flex items-center justify-center gap-2">🎩 Topi</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- COUNTDOWN SCREEN -->
+    <!-- ============================================== -->
+    <!-- COUNTDOWN SCREEN                               -->
+    <!-- ============================================== -->
     <div id="uiCountdown" class="absolute inset-0 flex flex-col items-center justify-center z-50 bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
         <h1 id="countdownText" class="font-kids text-9xl text-white drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform scale-0">3</h1>
     </div>
 
-    <!-- END SCREEN -->
+    <!-- ============================================== -->
+    <!-- END SCREEN (GAME OVER / VICTORY)               -->
+    <!-- ============================================== -->
     <div id="uiEnd" class="absolute inset-0 flex flex-col items-center justify-center z-50 bg-white/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-500">
         <div class="clay-card p-10 text-center max-w-md w-11/12">
             <div id="endEmoji" class="text-7xl mb-4 anim-breathe">💖</div>
             <h1 id="endTitle" class="font-kids text-4xl text-pink-500 mb-2">KERJA BAGUS!</h1>
             <p class="text-xl text-gray-600 font-bold mb-2">Bintang Didapat: <br><span id="endScore" class="font-kids text-yellow-400 text-6xl drop-shadow-sm">0</span> 🌟</p>
-            
-            <div id="newRecordBadge" class="hidden bg-gradient-to-r from-pink-400 to-cyan-400 text-white font-kids rounded-full py-1 px-4 mb-6 text-sm mx-auto shadow-md anim-float">
-                ✨ REKOR BARU! ✨
-            </div>
-            
+            <div id="newRecordBadge" class="hidden bg-gradient-to-r from-pink-400 to-cyan-400 text-white font-kids rounded-full py-1 px-4 mb-6 text-sm mx-auto shadow-md anim-float">✨ REKOR BARU! ✨</div>
             <div class="flex gap-2 w-full mt-4">
                 <button id="btnEndHome" class="clay-btn yellow flex-1 text-2xl py-3 border-2 border-white">🏠</button>
                 <button id="btnRestart" class="clay-btn cyan flex-[3] text-white font-kids text-2xl py-3 border-2 border-white">MAIN LAGI!</button>
@@ -258,18 +342,12 @@
                 <span class="font-kids text-xl text-yellow-600 metaStarsDisplay">0</span>
             </div>
         </header>
-
         <div class="flex-1 overflow-y-auto p-6 pb-24">
-            <h1 class="font-kids text-3xl text-green-700 text-center mb-6 drop-shadow-sm">Koleksi Hewanmu</h1>
-            <div class="grid grid-cols-3 md:grid-cols-4 gap-4" id="zooGrid">
-                <!-- Generated via JS -->
-            </div>
+            <h1 class="font-kids text-3xl text-green-700 text-center mb-6 drop-shadow-sm">Koleksi Hewan</h1>
+            <div class="grid grid-cols-3 md:grid-cols-4 gap-4" id="zooGrid"></div>
         </div>
-
-        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 pointer-events-auto w-full px-6 max-w-sm">
-            <button id="btnFeedZoo" class="clay-btn pink text-white font-kids text-xl py-4 w-full shadow-xl flex items-center justify-center gap-2">
-                🍎 Beri Makan (10 🌟)
-            </button>
+        <div class="absolute bottom-6 w-full px-6 max-w-sm left-1/2 -translate-x-1/2">
+            <button id="btnFeedZoo" class="clay-btn pink text-white font-kids text-xl py-4 w-full shadow-xl flex items-center justify-center gap-2">🍎 Beri Makan (10 🌟)</button>
         </div>
     </div>
 
@@ -285,12 +363,10 @@
             </div>
         </header>
         <div class="flex-1 overflow-y-auto p-6 pb-24 flex flex-col items-center">
-            
             <div class="w-40 h-40 relative anim-float mt-4 mb-8 bg-white/50 rounded-full border-4 border-white shadow-inner flex items-center justify-center">
                 <img src="https://i.imgur.com/IkLs0pT.png" class="h-32 object-contain drop-shadow-md">
                 <div class="hat-overlay -top-6 text-5xl" id="hatPreview"></div>
             </div>
-
             <h1 class="font-kids text-3xl text-pink-500 text-center mb-6 drop-shadow-sm">Toko Topi Idol</h1>
             <div class="grid grid-cols-3 gap-4 w-full max-w-sm" id="hatsGrid"></div>
         </div>
@@ -303,27 +379,21 @@
         <header class="w-full p-4 flex justify-between items-start pointer-events-auto">
             <div class="clay-card px-4 py-2 flex flex-col">
                 <span class="font-kids text-pink-500 text-xs md:text-sm" id="hudHpText">NYAWA IDOL</span>
-                <div class="flex gap-1 text-2xl" id="heartContainer">
-                    <span class="anim-breathe">❤️</span><span class="anim-breathe" style="animation-delay: 0.2s">❤️</span><span class="anim-breathe" style="animation-delay: 0.4s">❤️</span>
-                </div>
+                <div class="flex gap-1 text-2xl" id="heartContainer"><span class="anim-breathe">❤️</span><span class="anim-breathe" style="animation-delay:0.2s">❤️</span><span class="anim-breathe" style="animation-delay:0.4s">❤️</span></div>
             </div>
-
             <div class="clay-card px-6 py-2 flex flex-col items-center justify-center bg-yellow-50 border-yellow-200 relative">
                 <span class="font-kids text-yellow-500 text-2xl">🌟 <span id="valScore">0</span></span>
-                <div id="comboBadge" class="absolute -bottom-4 bg-orange-400 text-white text-xs font-kids px-2 py-1 rounded-full shadow-sm opacity-0 transition-opacity">
-                    Combo x<span id="valCombo">2</span>
-                </div>
+                <div id="comboBadge" class="absolute -bottom-4 bg-orange-400 text-white text-xs font-kids px-2 py-1 rounded-full shadow-sm opacity-0 transition-opacity">Combo x<span id="valCombo">2</span></div>
             </div>
-
             <div class="clay-card px-4 py-2 flex flex-col items-end">
                 <span class="font-kids text-cyan-500 text-xs md:text-sm">BABAK</span>
                 <span class="font-kids text-gray-700 text-2xl" id="valLevel">1</span>
             </div>
         </header>
-
         <div class="absolute bottom-4 right-4 flex gap-3 pointer-events-auto">
-            <button id="btnMusic" class="clay-card w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-2xl md:text-3xl active:scale-95 transition-transform border-2 border-gray-200">🎵</button>
-            <button id="btnHome" class="clay-card w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-2xl md:text-3xl active:scale-95 transition-transform border-2 border-gray-200">🏠</button>
+            <button id="btnSave" class="clay-card w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-2xl md:text-3xl active:scale-95 transition-transform border-2 border-green-300 bg-green-100 cursor-pointer">💾</button>
+            <button id="btnMusic" class="clay-card w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-2xl md:text-3xl active:scale-95 transition-transform border-2 border-gray-200 cursor-pointer">🎵</button>
+            <button id="btnHome" class="clay-card w-12 h-12 md:w-16 md:h-16 flex items-center justify-center text-2xl md:text-3xl active:scale-95 transition-transform border-2 border-gray-200 cursor-pointer">🏠</button>
         </div>
     </div>
 
@@ -336,7 +406,7 @@
                 <div class="stage-platform"></div>
                 <div class="w-full h-full drop-shadow-[0_15px_15px_rgba(0,0,0,0.3)] relative" id="m1PlayerBox">
                     <img src="https://i.imgur.com/IkLs0pT.png" alt="Hunter" class="w-full h-full object-contain">
-                    <div class="hat-overlay -top-6" id="m1Hat"></div>
+                    <div class="hat-overlay" id="m1Hat" style="font-size: 6rem; top: -3rem;"></div>
                 </div>
             </div>
             <div class="relative w-36 h-36 md:w-64 md:h-64 z-20 anim-float mt-8">
@@ -367,14 +437,14 @@
     <!-- MODE 2: MONSTER NYAM-NYAM                      -->
     <!-- ============================================== -->
     <div id="uiMode2" class="absolute inset-0 flex-col z-20 hidden">
-        <div class="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center">
+        <div class="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center pointer-events-none">
             <div class="bg-white/90 backdrop-blur-sm px-6 py-2 rounded-full border-4 border-cyan-300 shadow-md flex items-center gap-2">
                 <span class="font-kids text-gray-500">Makan Supaya Jadi:</span>
             </div>
             <div class="text-white text-2xl anim-float">⬇️</div>
         </div>
         <main id="eatPlayArea" class="flex-1 relative w-full h-full overflow-hidden touch-none pt-24">
-            <div id="m2Monster" class="absolute bottom-10 left-1/2 -translate-x-1/2 w-40 h-40 jelly-monster bg-orange-400 flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)]">
+            <div id="m2Monster" class="absolute bottom-10 left-1/2 -translate-x-1/2 w-40 h-40 jelly-monster bg-orange-400 flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)] transition-transform will-change-transform">
                 <div class="absolute top-6 flex gap-8">
                     <div class="w-4 h-6 bg-black rounded-full anim-blink" id="m2EyeL"><div class="w-2 h-2 bg-white rounded-full mt-1 ml-1"></div></div>
                     <div class="w-4 h-6 bg-black rounded-full anim-blink" id="m2EyeR"><div class="w-2 h-2 bg-white rounded-full mt-1 ml-1"></div></div>
@@ -382,7 +452,7 @@
                 <div class="mt-4 bg-white/30 backdrop-blur-sm w-24 h-24 rounded-full border-4 border-white flex flex-col items-center justify-center shadow-inner">
                     <span id="m2TargetText" class="font-kids text-5xl text-white drop-shadow-md">10</span>
                 </div>
-                <div class="absolute -top-12 bg-white px-3 py-1 rounded-xl font-kids text-sm text-cyan-600 border-2 border-cyan-200 shadow-sm opacity-0 transition-opacity duration-300" id="m2EatenBubble">
+                <div class="absolute -top-12 bg-white px-3 py-1 rounded-xl font-kids text-sm text-cyan-600 border-2 border-cyan-200 shadow-sm opacity-0 transition-opacity duration-300 whitespace-nowrap z-20" id="m2EatenBubble">
                     Total: <span id="m2CurrentText" class="text-xl">0</span>
                 </div>
             </div>
@@ -395,34 +465,25 @@
     <!-- ============================================== -->
     <div id="uiMode3" class="absolute inset-0 flex-col z-20 hidden">
         <main class="flex-1 relative flex items-center justify-center px-4 pt-20 pb-32">
-            
             <div class="relative w-full max-w-sm flex flex-col items-center mt-10">
                 <div class="cage-platform"></div>
-                <!-- Cage -->
                 <div id="m3Cage" class="cage flex items-end justify-center pb-4 z-10 transition-all duration-300">
                     <div id="m3Animal" class="cage-animal">🐶</div>
                 </div>
-                
-                <!-- Lock Pad -->
                 <div id="m3Padlock" class="padlock z-20 transition-all duration-300">
                     <div class="w-10 h-10 bg-gray-800 rounded-full flex flex-col items-center justify-center shadow-inner">
                         <div class="w-2 h-4 bg-gray-900 rounded-sm"></div>
                         <div class="w-4 h-4 bg-gray-900 rounded-full -mt-2"></div>
                     </div>
                 </div>
-
-                <!-- Puzzle Display -->
                 <div class="absolute -top-16 w-full flex justify-center z-30">
                     <div class="clay-card py-3 px-6 border-4 border-yellow-200 bg-white" id="m3QBox">
-                        <p id="m3Instruction" class="text-center font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">Isi Angka yang Hilang!</p>
+                        <p id="m3Instruction" class="text-center font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">Isi Angka Hilang!</p>
                         <span id="m3Question" class="font-kids text-4xl text-cyan-500 drop-shadow-sm transition-all duration-300 text-center block">2, 4, ?, 8</span>
                     </div>
                 </div>
-
             </div>
-
         </main>
-
         <footer class="w-full absolute bottom-0 pb-6 md:pb-8 pt-4 px-4 z-30">
             <div class="max-w-3xl mx-auto grid grid-cols-3 gap-3 md:gap-8 pr-16" id="m3Grid"></div>
         </footer>
@@ -435,8 +496,6 @@
         <div class="market-awning w-full absolute top-0 z-10"></div>
         
         <main class="flex-1 relative flex flex-col items-center pt-20 pb-32 px-4 overflow-y-auto">
-            
-            <!-- Cashier & Interaction -->
             <div class="flex items-end justify-center gap-2 mb-4 w-full max-w-md mt-4">
                 <div class="text-7xl anim-breathe" id="m4CashierEmoji">🍎</div>
                 <div class="clay-card p-4 relative border-4 border-pink-200" id="m4SpeechBubble">
@@ -469,22 +528,58 @@
                     </div>
                 </div>
                 
-                <div class="flex justify-center gap-6 mt-4 w-full pb-8">
-                    <button class="coin-btn" onclick="Mode4.addCoin(1)">1</button>
-                    <button class="coin-btn" onclick="Mode4.addCoin(2)">2</button>
-                    <button class="coin-btn" onclick="Mode4.addCoin(5)">5</button>
+                <div class="flex justify-center gap-4 mt-4 w-full pb-8">
+                    <!-- Koin bentuk membulat sesuai request -->
+                    <button class="coin-btn" onclick="Mode4.addCoin(1)">🪙 1</button>
+                    <button class="coin-btn" onclick="Mode4.addCoin(2)">🪙 2</button>
+                    <button class="coin-btn" onclick="Mode4.addCoin(5)">🪙 5</button>
                 </div>
             </div>
-
         </main>
         
-        <!-- Idol Character decorative in Market -->
         <div class="absolute bottom-4 left-2 w-24 h-32 z-30 pointer-events-none">
             <div class="w-full h-full relative anim-breathe drop-shadow-lg">
                 <img src="https://i.imgur.com/IkLs0pT.png" class="w-full h-full object-contain">
                 <div class="hat-overlay -top-6 text-3xl" id="m4Hat"></div>
             </div>
         </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODE 5: POP-POP BALLOONS (NEW)                 -->
+    <!-- ============================================== -->
+    <div id="uiMode5" class="absolute inset-0 flex-col z-20 hidden m5-bg">
+        <div class="absolute top-20 left-1/2 -translate-x-1/2 w-full px-6 flex justify-between items-center z-10 pointer-events-none">
+            <div class="bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full border-4 border-blue-400 shadow-md flex items-center gap-2" id="m5PromptBox">
+                <span class="font-kids text-blue-600 text-lg">Pecahkan: <span id="m5TargetText" class="text-3xl text-pink-500">3</span> ⭐</span>
+            </div>
+            <button id="m5BtnSpeaker" class="clay-btn bg-white border-2 border-blue-400 w-16 h-16 flex items-center justify-center text-3xl pointer-events-auto rounded-full shadow-lg active:scale-90">🔊</button>
+        </div>
+        <main class="flex-1 relative flex flex-col justify-end items-center px-4 pb-32">
+            <div id="m5BalloonsContainer" class="w-full flex justify-around items-end h-64 relative z-20"></div>
+        </main>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODE 6: ROBOT PENCARI PASANGAN (NEW)           -->
+    <!-- ============================================== -->
+    <div id="uiMode6" class="absolute inset-0 flex-col z-20 hidden m6-bg">
+        <!-- SVG for Drawing Glow Line -->
+        <svg id="m6Svg" class="absolute inset-0 pointer-events-none z-30" style="width: 100%; height: 100%;">
+            <line id="m6Line" x1="0" y1="0" x2="0" y2="0" stroke="#fef08a" stroke-width="8" stroke-linecap="round" style="filter: drop-shadow(0 0 15px #fef08a); opacity: 0;"></line>
+        </svg>
+
+        <div class="absolute top-20 left-1/2 -translate-x-1/2 z-10 w-full text-center pointer-events-none">
+            <span class="bg-white/90 px-6 py-2 rounded-full border-4 border-slate-400 font-kids text-slate-700 shadow-md text-sm md:text-lg">Hubungkan ke Robot yang Tepat!</span>
+        </div>
+
+        <main class="flex-1 flex justify-between items-center px-4 md:px-16 pt-32 pb-10 z-20" id="m6Area">
+            <!-- Left: Items Box -->
+            <div id="m6Source" class="m6-box touch-none"></div>
+            
+            <!-- Right: Robots List -->
+            <div id="m6Robots" class="flex flex-col gap-14"></div>
+        </main>
     </div>
 
     <script>
@@ -504,11 +599,14 @@
                 getHats: () => JSON.parse(localStorage.getItem('kpop_math_hats')) || [],
                 addHat: (e) => { let a = StorageController.getHats(); if(!a.includes(e)) { a.push(e); localStorage.setItem('kpop_math_hats', JSON.stringify(a)); } },
                 getEqHat: () => localStorage.getItem('kpop_math_eq_hat') || '',
-                setEqHat: (e) => localStorage.setItem('kpop_math_eq_hat', e)
+                setEqHat: (e) => localStorage.setItem('kpop_math_eq_hat', e),
+                getAnimalSizes: () => JSON.parse(localStorage.getItem('kpop_math_animal_sizes')) || {},
+                setAnimalSize: (e, s) => { let sizes = StorageController.getAnimalSizes(); sizes[e] = s; localStorage.setItem('kpop_math_animal_sizes', JSON.stringify(sizes)); }
             };
         })();
 
-        const ANIMAL_LIST = ['🐶','🐱','🐰','🐼','🦊','🐨','🦁','🐯','🐮','🐷','🐸','🐵'];
+        // Update list of unlockable animals
+        const ANIMAL_LIST = ['🐶','🐱','🐰','🐼','🦊','🐨','🦁','🐯','🐮','🐷','🐸','🐵','🦒','🦓','🦇','🦆','🐢','🦏','🦋','🐃'];
         const HAT_LIST = ['👑','🧢','🎩','🎀','🌸','🎓'];
 
         /**
@@ -543,7 +641,6 @@
                 osc.connect(gain); gain.connect(dest); osc.start(); osc.stop(ctx.currentTime + dur);
             }
             
-            // Basic sound helpers
             function playDrum(isKick) { if(isMuted||!ctx) return; const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.setValueAtTime(isKick?100:300,ctx.currentTime); o.frequency.exponentialRampToValueAtTime(0.01,ctx.currentTime+(isKick?0.3:0.1)); g.gain.setValueAtTime(1,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+(isKick?0.3:0.1)); o.connect(g); g.connect(bgmNode); o.start(); o.stop(ctx.currentTime+0.3); }
             function createVinyl() { if(!ctx) return; const bs=ctx.sampleRate*2, buf=ctx.createBuffer(1,bs,ctx.sampleRate), d=buf.getChannelData(0); for(let i=0;i<bs;i++) d[i]=(Math.random()*2-1)*0.015; vinylSource=ctx.createBufferSource(); vinylSource.buffer=buf; vinylSource.loop=true; vinylSource.connect(bgmNode); if(!isMuted) vinylSource.start(); }
 
@@ -571,7 +668,8 @@
                 m3Unlock: () => { playOsc(659.25, 'triangle', 0.1, sfxNode); setTimeout(() => playOsc(1046.50, 'triangle', 0.3, sfxNode), 100); },
                 m4Coin: () => { playOsc(1200, 'sine', 0.1, sfxNode, 0.2); setTimeout(()=>playOsc(1500, 'sine', 0.1, sfxNode, 0.1), 50); },
                 m4Pop: () => { playOsc(400, 'sine', 0.05, sfxNode, 0.3); },
-                m4Talk: () => { playOsc(800 + Math.random()*200, 'square', 0.05, sfxNode, 0.1); }
+                m4Talk: () => { playOsc(800 + Math.random()*200, 'square', 0.05, sfxNode, 0.1); setTimeout(() => playOsc(900 + Math.random()*200, 'square', 0.05, sfxNode, 0.1), 100); },
+                m5Pop: () => { playOsc(600, 'triangle', 0.1, sfxNode, 0.4); }
             };
         })();
 
@@ -621,18 +719,30 @@
         const MetaCtrl = (function() {
             const zoo = document.getElementById('uiZoo'); const hats = document.getElementById('uiHats');
             const zooGrid = document.getElementById('zooGrid'); const hatsGrid = document.getElementById('hatsGrid');
+            let selectedAnimal = null;
             
             function openZoo() { AudioSys.init(); AudioSys.startBGM(); zoo.classList.remove('hidden'); setTimeout(()=>zoo.classList.remove('opacity-0'), 50); renderZoo(); }
             function openHats() { AudioSys.init(); AudioSys.startBGM(); hats.classList.remove('hidden'); setTimeout(()=>hats.classList.remove('opacity-0'), 50); renderHats(); }
             function closeAll() { zoo.classList.add('opacity-0'); hats.classList.add('opacity-0'); setTimeout(()=>{zoo.classList.add('hidden'); hats.classList.add('hidden');}, 500); }
 
             function renderZoo() {
-                const s = StorageController.getStars(); const o = StorageController.getAnimals();
+                const s = StorageController.getStars(); const o = StorageController.getAnimals(); const sizes = StorageController.getAnimalSizes();
                 document.querySelectorAll('.metaStarsDisplay').forEach(el => el.innerText = s);
                 zooGrid.innerHTML = '';
+                
+                if (o.length > 0 && (!selectedAnimal || !o.includes(selectedAnimal))) {
+                    selectedAnimal = o[0];
+                }
+
                 ANIMAL_LIST.forEach((a, i) => {
                     const el = document.createElement('div');
-                    if(o.includes(a)) { el.className = 'animal-pen anim-breathe'; el.style.animationDelay = `${i*0.2}s`; el.innerText = a; } 
+                    if(o.includes(a)) { 
+                        let fSize = sizes[a] || 40;
+                        el.className = `animal-pen cursor-pointer anim-breathe ${selectedAnimal === a ? 'selected' : ''}`; 
+                        el.style.animationDelay = `${i*0.2}s`; 
+                        el.innerHTML = `<span class="animal-pen-text" style="font-size: ${fSize}px">${a}</span>`; 
+                        el.onclick = () => { selectedAnimal = a; AudioSys.m4Pop(); renderZoo(); };
+                    } 
                     else { el.className = 'animal-pen locked'; el.innerText = '?'; }
                     zooGrid.appendChild(el);
                 });
@@ -672,14 +782,47 @@
                 });
             }
 
-            document.getElementById('btnFeedZoo').onclick = () => {
-                if(StorageController.getStars()>=10 && StorageController.getAnimals().length>0) {
-                    StorageController.addStars(-10); renderZoo(); AudioSys.m2Eat();
+            document.getElementById('btnFeedZoo').onclick = (e) => {
+                const o = StorageController.getAnimals();
+                const btnCenter = MainCtrl.getCenter(e.currentTarget);
+                
+                if(StorageController.getStars() >= 10 && o.length > 0 && selectedAnimal) {
+                    let sizes = StorageController.getAnimalSizes();
+                    let currentSize = sizes[selectedAnimal] || 40;
+                    
+                    if (currentSize >= 70) {
+                        AudioSys.m1Wrong();
+                        FX.text(btnCenter.x, btnCenter.y - 50, "Kenyang Max!", '#FF6B6B');
+                        e.currentTarget.classList.add('anim-shake');
+                        setTimeout(() => e.currentTarget.classList.remove('anim-shake'), 400);
+                        return;
+                    }
+
+                    StorageController.addStars(-10); 
+                    currentSize = Math.min(70, currentSize + 5);
+                    StorageController.setAnimalSize(selectedAnimal, currentSize);
+                    
+                    renderZoo(); AudioSys.m2Eat();
+                    
                     Array.from(zooGrid.children).forEach(el => {
-                        if(!el.classList.contains('locked')) { el.classList.remove('anim-breathe'); el.classList.add('anim-jump'); setTimeout(()=>{el.classList.remove('anim-jump'); el.classList.add('anim-breathe');},500); }
+                        const span = el.querySelector('span');
+                        if(span && span.innerText === selectedAnimal) { 
+                            el.classList.remove('anim-breathe'); el.classList.add('anim-jump'); 
+                            const rect = el.getBoundingClientRect();
+                            FX.burst(rect.left + rect.width/2, rect.top);
+                            setTimeout(()=>{el.classList.remove('anim-jump'); el.classList.add('anim-breathe');},500); 
+                        }
                     });
+                } else if (o.length === 0) {
+                    AudioSys.m1Wrong();
+                    FX.text(btnCenter.x, btnCenter.y - 50, "Belum Punya!", '#FF6B6B');
+                    e.currentTarget.classList.add('anim-shake');
+                    setTimeout(() => e.currentTarget.classList.remove('anim-shake'), 400);
                 } else {
                     AudioSys.m1Wrong();
+                    FX.text(btnCenter.x, btnCenter.y - 50, "Kurang Bintang!", '#FF6B6B');
+                    e.currentTarget.classList.add('anim-shake');
+                    setTimeout(() => e.currentTarget.classList.remove('anim-shake'), 400);
                 }
             };
 
@@ -696,7 +839,14 @@
                 ui: { start: document.getElementById('uiStart'), count: document.getElementById('uiCountdown'), end: document.getElementById('uiEnd'), sharedHUD: document.getElementById('uiSharedHUD') },
                 countTxt: document.getElementById('countdownText'),
                 hud: { hearts: document.getElementById('heartContainer').children, score: document.getElementById('valScore'), level: document.getElementById('valLevel'), combo: document.getElementById('valCombo'), comboBadge: document.getElementById('comboBadge'), hpText: document.getElementById('hudHpText') },
-                btns: { m1: document.getElementById('btnStartMode1'), m2: document.getElementById('btnStartMode2'), m3: document.getElementById('btnStartMode3'), m4: document.getElementById('btnStartMode4') }
+                btns: { 
+                    m1: document.getElementById('btnStartMode1'), 
+                    m2: document.getElementById('btnStartMode2'), 
+                    m3: document.getElementById('btnStartMode3'), 
+                    m4: document.getElementById('btnStartMode4'), 
+                    m5: document.getElementById('btnStartMode5'), 
+                    m6: document.getElementById('btnStartMode6') 
+                }
             };
 
             let currentMode = null; let activeGame = null;
@@ -705,17 +855,40 @@
             function init() {
                 updateStartUI(); updateHats();
                 
-                DOM.btns.m1.onclick = () => { currentMode = 1; DOM.hud.hpText.innerText = "NYAWA IDOL"; startSeq(); };
-                DOM.btns.m2.onclick = () => { currentMode = 2; DOM.hud.hpText.innerText = "NYAWA IDOL"; startSeq(); };
-                DOM.btns.m3.onclick = () => { currentMode = 3; DOM.hud.hpText.innerText = "KESEMPATAN"; startSeq(); };
-                DOM.btns.m4.onclick = () => { currentMode = 4; DOM.hud.hpText.innerText = "KESEMPATAN"; startSeq(); };
+                if(DOM.btns.m1) DOM.btns.m1.onclick = () => { currentMode = 1; DOM.hud.hpText.innerText = "NYAWA IDOL"; startSeq(); };
+                if(DOM.btns.m2) DOM.btns.m2.onclick = () => { currentMode = 2; DOM.hud.hpText.innerText = "NYAWA IDOL"; startSeq(); };
+                if(DOM.btns.m3) DOM.btns.m3.onclick = () => { currentMode = 3; DOM.hud.hpText.innerText = "KESEMPATAN"; startSeq(); };
+                if(DOM.btns.m4) DOM.btns.m4.onclick = () => { currentMode = 4; DOM.hud.hpText.innerText = "KESEMPATAN"; startSeq(); };
+                if(DOM.btns.m5) DOM.btns.m5.onclick = () => { currentMode = 5; DOM.hud.hpText.innerText = "KESEMPATAN"; startSeq(); };
+                if(DOM.btns.m6) DOM.btns.m6.onclick = () => { currentMode = 6; DOM.hud.hpText.innerText = "KESEMPATAN"; startSeq(); };
                 
                 document.getElementById('btnZoo').onclick = () => { DOM.ui.start.classList.add('opacity-0', 'pointer-events-none'); MetaCtrl.openZoo(); };
                 document.getElementById('btnHats').onclick = () => { DOM.ui.start.classList.add('opacity-0', 'pointer-events-none'); MetaCtrl.openHats(); };
                 
+                document.getElementById('btnSave').onclick = () => {
+                    if(!currentMode || !activeGame) return;
+                    let currentScore = parseInt(document.getElementById('valScore').innerText) || 0;
+                    StorageController.addStars(currentScore); StorageController.setHigh(currentMode, currentScore);
+                    AudioSys.sfxLevelUp();
+                    const saveBtn = document.getElementById('btnSave'); saveBtn.classList.add('anim-jump'); setTimeout(()=> saveBtn.classList.remove('anim-jump'), 500);
+                    const center = getCenter(saveBtn); FX.burst(center.x, center.y, 20);
+                    
+                    AudioSys.stopBGM(); if(activeGame) activeGame.stop();
+                    [1,2,3,4,5,6].forEach(i => {
+                        let el = document.getElementById(`uiMode${i}`);
+                        if(el) el.classList.add('hidden');
+                    });
+                    DOM.ui.sharedHUD.classList.replace('opacity-100', 'opacity-0');
+                    updateStartUI();
+                    setTimeout(() => { DOM.ui.start.classList.remove('opacity-0', 'pointer-events-none'); document.getElementById('bgFloor').style.display = 'block'; }, 400);
+                };
+                
                 const goHome = () => {
                     AudioSys.stopBGM(); if(activeGame) activeGame.stop();
-                    [1,2,3,4].forEach(i => document.getElementById(`uiMode${i}`).classList.add('hidden'));
+                    [1,2,3,4,5,6].forEach(i => {
+                        let el = document.getElementById(`uiMode${i}`);
+                        if(el) el.classList.add('hidden');
+                    });
                     DOM.ui.sharedHUD.classList.replace('opacity-100', 'opacity-0');
                     DOM.ui.end.classList.add('opacity-0', 'pointer-events-none');
                     updateStartUI(); MetaCtrl.closeAll();
@@ -729,20 +902,20 @@
             }
 
             function updateStartUI() {
-                [1,2,3,4].forEach(i => document.getElementById('h'+i).innerText = StorageController.getHigh(i));
+                [1,2,3,4,5,6].forEach(i => {
+                    let el = document.getElementById('h'+i);
+                    if(el) el.innerText = StorageController.getHigh(i);
+                });
                 document.getElementById('uiGlobalStars').innerText = StorageController.getStars();
             }
 
             function updateHats() {
                 const hat = StorageController.getEqHat();
-                // Ensure elements exist before setting innerText
-                const mHat = document.getElementById('menuHat');
-                const m1Hat = document.getElementById('m1Hat');
-                const m4Hat = document.getElementById('m4Hat');
-                
-                if (mHat) mHat.innerText = hat;
-                if (m1Hat) m1Hat.innerText = hat;
-                if (m4Hat) m4Hat.innerText = hat;
+                const ids = ['menuHat', 'm1Hat', 'm4Hat'];
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) el.innerText = hat;
+                });
             }
 
             function startSeq() {
@@ -757,16 +930,19 @@
                             DOM.ui.count.classList.add('opacity-0', 'pointer-events-none'); DOM.countTxt.classList.remove('text-pink-400');
                             AudioSys.startBGM(); DOM.ui.sharedHUD.classList.replace('opacity-0', 'opacity-100');
                             
-                            document.getElementById('bgFloor').style.display = (currentMode === 2 || currentMode === 4) ? 'none' : 'block';
+                            document.getElementById('bgFloor').style.display = (currentMode === 2 || currentMode === 4 || currentMode === 5 || currentMode === 6) ? 'none' : 'block';
 
-                            const modes = [null, Mode1, Mode2, Mode3, Mode4];
+                            const modes = [null, Mode1, Mode2, Mode3, Mode4, Mode5, Mode6];
                             activeGame = modes[currentMode];
-                            document.getElementById(`uiMode${currentMode}`).classList.replace('hidden', 'flex');
+                            const modeEl = document.getElementById(`uiMode${currentMode}`);
+                            if(modeEl) modeEl.classList.replace('hidden', 'flex');
                             activeGame.start();
                         }, 800);
                     }
                 }, 800);
             }
+
+            function getCenter(el) { const r = el.getBoundingClientRect(); return { x: r.left + r.width/2, y: r.top + r.height/2 }; }
 
             return {
                 init, updateHats, updateSharedHUD: (hp, s, l, c) => {
@@ -775,13 +951,16 @@
                     if(c > 1) { DOM.hud.combo.innerText = c; DOM.hud.comboBadge.style.opacity = '1'; } else { DOM.hud.comboBadge.style.opacity = '0'; }
                 },
                 gameOver: (s, m) => {
-                    AudioSys.stopBGM(); document.getElementById(`uiMode${m}`).classList.add('hidden'); DOM.ui.sharedHUD.classList.replace('opacity-100', 'opacity-0');
+                    AudioSys.stopBGM(); 
+                    const modeEl = document.getElementById(`uiMode${m}`);
+                    if(modeEl) modeEl.classList.add('hidden'); 
+                    DOM.ui.sharedHUD.classList.replace('opacity-100', 'opacity-0');
                     document.getElementById('endScore').innerText = s; StorageController.addStars(s);
                     const isNew = StorageController.setHigh(m, s); document.getElementById('newRecordBadge').classList[isNew?'remove':'add']('hidden');
                     DOM.ui.end.classList.remove('opacity-0', 'pointer-events-none'); document.getElementById('bgFloor').style.display = 'block';
                 },
                 randColor: () => AMOEBA_COLORS[Math.floor(Math.random() * AMOEBA_COLORS.length)],
-                getCenter: (el) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width/2, y: r.top + r.height/2 }; }
+                getCenter: getCenter
             };
         })();
 
@@ -818,74 +997,62 @@
         // MODE 2
         const Mode2 = (function(){
             const DOM = { 
-                a: document.getElementById('eatPlayArea'), 
-                m: document.getElementById('m2Monster'), 
-                f: document.getElementById('m2FoodContainer'), 
-                tt: document.getElementById('m2TargetText'), 
-                tc: document.getElementById('m2CurrentText'), 
-                b: document.getElementById('m2EatenBubble') 
+                a: document.getElementById('eatPlayArea'), m: document.getElementById('m2Monster'), 
+                f: document.getElementById('m2FoodContainer'), tt: document.getElementById('m2TargetText'), 
+                tc: document.getElementById('m2CurrentText'), b: document.getElementById('m2EatenBubble') 
             };
-            let st = {}; 
-            let ply = false, fds = [], lid, tmr, mx = window.innerWidth / 2;
+            let st = {}; let ply = false, fds = [], lid, tmr;
+            let mx = window.innerWidth / 2, targetX = mx;
+            let drops = 0, nextCorr = 3;
             
             function hM(e) {
                 if(!ply) return; 
                 let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                mx = Math.max(80, Math.min(window.innerWidth - 80, clientX)); 
-                DOM.m.style.transform = `translateX(-50%)`; 
-                DOM.m.style.left = `${mx}px`;
+                targetX = Math.max(80, Math.min(window.innerWidth - 80, clientX)); 
             }
 
             function start() { 
                 st = {h:3, s:0, l:1, c:0, t:10, cur:0}; 
                 MainCtrl.updateSharedHUD(3, 0, 1, 0); 
-                DOM.m.className = `absolute bottom-10 left-1/2 w-40 h-40 jelly-monster ${MainCtrl.randColor()} flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)]`; 
-                DOM.m.style.transform = `translateX(-50%)`; 
-                DOM.a.addEventListener('touchmove', hM, {passive: false}); 
-                DOM.a.addEventListener('mousemove', hM); 
-                ply = true; 
-                fds = []; 
-                DOM.f.innerHTML = ''; 
-                nT(); 
-                loop(); 
-                spwn(); 
+                targetX = window.innerWidth / 2; mx = targetX;
+                
+                DOM.m.className = `absolute bottom-10 left-1/2 w-40 h-40 jelly-monster ${MainCtrl.randColor()} flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)] transition-transform will-change-transform`; 
+                DOM.m.style.transform = `translateX(-50%)`; DOM.m.style.left = `${mx}px`;
+                DOM.a.addEventListener('touchmove', hM, {passive: false}); DOM.a.addEventListener('mousemove', hM); 
+                
+                ply = true; fds = []; DOM.f.innerHTML = ''; 
+                nT(); loop(); drops = 0; nextCorr = Math.floor(Math.random() * 7) + 2; spwn(); 
             }
 
             function stop() { 
-                ply = false; 
-                cancelAnimationFrame(lid); 
-                clearTimeout(tmr); 
-                DOM.a.removeEventListener('touchmove', hM); 
-                DOM.a.removeEventListener('mousemove', hM); 
+                ply = false; cancelAnimationFrame(lid); clearTimeout(tmr); 
+                DOM.a.removeEventListener('touchmove', hM); DOM.a.removeEventListener('mousemove', hM); 
             }
             
             function nT() { 
-                st.cur = 0; 
-                DOM.tc.innerText = 0; 
-                DOM.b.classList.replace('opacity-100', 'opacity-0'); 
-                st.t = 5 + Math.floor(st.l * 1.5) + Math.floor(Math.random() * 5); 
-                DOM.tt.innerText = st.t; 
+                st.cur = 0; DOM.tc.innerText = 0; DOM.b.classList.replace('opacity-100', 'opacity-0'); 
+                st.t = 5 + Math.floor(st.l * 1.5) + Math.floor(Math.random() * 5); DOM.tt.innerText = st.t; 
             }
 
             function spwn() { 
                 if(!ply) return; 
-                const fd = document.createElement('div'); 
-                fd.className = 'falling-food'; 
-                let v, nd = st.t - st.cur; 
-                if(nd <= 0) return; 
+                let nd = st.t - st.cur; 
+                if(nd <= 0) { tmr = setTimeout(spwn, Math.max(800, 2000 - (st.l * 100)) + Math.random() * 500); return; }
                 
-                if (Math.random() > 0.4 && nd <= 10) v = nd; 
-                else if (Math.random() > 0.5) v = Math.floor(Math.random() * (nd - 1)) + 1; 
-                else v = nd + Math.floor(Math.random() * 5) + 1; 
+                const fd = document.createElement('div'); fd.className = 'falling-food'; 
+                let v; drops++;
+                
+                if (drops >= nextCorr && nd <= 10) { v = nd; drops = 0; nextCorr = Math.floor(Math.random() * 7) + 2; } 
+                else {
+                    if (Math.random() > 0.5 && nd > 1) v = Math.floor(Math.random() * (nd - 1)) + 1; 
+                    else v = nd + Math.floor(Math.random() * 5) + 1;
+                    if (v === nd) v += 1;
+                }
                 
                 fd.innerText = v; 
-                
                 const areaWidth = DOM.a.offsetWidth > 0 ? DOM.a.offsetWidth : window.innerWidth;
                 const x = 30 + Math.random() * (areaWidth - 90); 
-                
-                fd.style.left = `${x}px`; 
-                fd.style.top = `-60px`; 
-                DOM.f.appendChild(fd); 
+                fd.style.left = `${x}px`; fd.style.top = `-60px`; DOM.f.appendChild(fd); 
                 
                 fds.push({e: fd, x: x, y: -60, v: v, s: 2 + (st.l * 0.5) + Math.random() * 2}); 
                 tmr = setTimeout(spwn, Math.max(800, 2000 - (st.l * 100)) + Math.random() * 500); 
@@ -893,92 +1060,103 @@
 
             function loop() { 
                 if(!ply) return; 
-                const mr = DOM.m.getBoundingClientRect();
-                const cx = mr.left + mr.width / 2;
-                const cy = mr.top + mr.height / 2; 
+                mx += (targetX - mx) * 0.2; DOM.m.style.left = `${mx}px`;
+                const mr = DOM.m.getBoundingClientRect(); const cx = mr.left + mr.width / 2; const cy = mr.top + mr.height / 2; 
                 
                 for(let i = fds.length - 1; i >= 0; i--) {
-                    let f = fds[i]; 
-                    f.y += f.s; 
-                    f.e.style.transform = `translateY(${f.y}px)`; 
-                    
-                    const fr = f.e.getBoundingClientRect();
-                    const fx = fr.left + fr.width / 2;
-                    const fy = fr.top + fr.height / 2;
-
-                    if (Math.hypot(cx - fx, cy - fy) < 60) {
-                        f.e.remove();
-                        fds.splice(i, 1);
-                        hC(f.v, cx, cy - 40);
-                    } else if (f.y > window.innerHeight) {
-                        f.e.remove();
-                        fds.splice(i, 1);
-                    }
+                    let f = fds[i]; f.y += f.s; f.e.style.transform = `translateY(${f.y}px)`; 
+                    const fr = f.e.getBoundingClientRect(); const fx = fr.left + fr.width / 2; const fy = fr.top + fr.height / 2;
+                    if (Math.hypot(cx - fx, cy - fy) < 60) { f.e.remove(); fds.splice(i, 1); hC(f.v, cx, cy - 40); } 
+                    else if (f.y > window.innerHeight) { f.e.remove(); fds.splice(i, 1); }
                 } 
                 lid = requestAnimationFrame(loop); 
             }
             
             function hC(v, x, y) { 
-                st.cur += v; 
-                DOM.tc.innerText = st.cur; 
-                DOM.b.classList.replace('opacity-0', 'opacity-100'); 
+                st.cur += v; DOM.tc.innerText = st.cur; DOM.tt.innerText = st.t - st.cur; DOM.b.classList.replace('opacity-0', 'opacity-100'); 
                 
                 if (st.cur === st.t) { 
-                    AudioSys.m2Eat(); 
-                    st.s += 20; 
-                    st.c++; 
-                    st.l++; 
-                    MainCtrl.updateSharedHUD(st.h, st.s, st.l, st.c); 
-                    DOM.m.style.transform = 'scale(1.2) translateX(-50%)'; 
-                    FX.burst(x, y, 40); 
-                    FX.text(x, y - 50, "NYAM!", '#4ECDC4'); 
-                    
-                    fds.forEach(f => f.e.remove()); 
-                    fds = []; 
-                    
-                    setTimeout(() => {
-                        DOM.m.style.transform = 'translateX(-50%)'; 
-                        DOM.m.className = `absolute bottom-10 left-1/2 w-40 h-40 jelly-monster ${MainCtrl.randColor()} flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)]`; 
-                        nT();
-                    }, 500); 
+                    AudioSys.m2Eat(); st.s += 20; st.c++; st.l++; MainCtrl.updateSharedHUD(st.h, st.s, st.l, st.c); 
+                    DOM.m.style.transform = 'translateX(-50%) scale(1.2)'; FX.burst(x, y, 40); FX.text(x, y - 50, "NYAM!", '#4ECDC4'); 
+                    fds.forEach(f => f.e.remove()); fds = []; 
+                    setTimeout(() => { DOM.m.style.transform = 'translateX(-50%)'; DOM.m.className = `absolute bottom-10 left-1/2 w-40 h-40 jelly-monster ${MainCtrl.randColor()} flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)] transition-transform will-change-transform`; nT(); }, 500); 
                 } else if (st.cur > st.t) { 
-                    AudioSys.m2Burp(); 
-                    st.h--; 
-                    st.c = 0; 
-                    MainCtrl.updateSharedHUD(st.h, st.s, st.l, st.c); 
-                    DOM.m.classList.add('anim-shake'); 
-                    FX.smoke(x, y, 20); 
-                    FX.text(x, y - 50, "KEKENYANGAN!", '#FF6B6B'); 
-                    
+                    AudioSys.m2Burp(); st.h--; st.c = 0; MainCtrl.updateSharedHUD(st.h, st.s, st.l, st.c); 
+                    DOM.m.classList.add('anim-shake'); FX.smoke(x, y, 20); FX.text(x, y - 50, "KEKENYANGAN!", '#FF6B6B'); 
                     setTimeout(() => DOM.m.classList.remove('anim-shake'), 400); 
-                    
-                    if (st.h <= 0) {
-                        ply = false;
-                        MainCtrl.gameOver(st.s, 2);
-                    } else {
-                        fds.forEach(f => f.e.remove());
-                        fds = [];
-                        nT();
-                    } 
+                    if (st.h <= 0) { ply = false; MainCtrl.gameOver(st.s, 2); } 
+                    else { fds.forEach(f => f.e.remove()); fds = []; nT(); } 
                 } else { 
-                    AudioSys.sfxCount(); 
-                    DOM.m.style.transform = 'scale(1.05) translateX(-50%)'; 
-                    setTimeout(() => DOM.m.style.transform = 'translateX(-50%)', 100); 
+                    AudioSys.sfxCount(); DOM.m.style.transform = 'translateX(-50%) scale(1.05)'; setTimeout(() => DOM.m.style.transform = 'translateX(-50%)', 100); 
                 } 
             }
 
-            return { start: start, stop: stop };
+            return { start, stop };
         })();
 
         // MODE 3
         const Mode3 = (function(){
-            const DOM = { c:document.getElementById('m3Cage'), a:document.getElementById('m3Animal'), p:document.getElementById('m3Padlock'), i:document.getElementById('m3Instruction'), q:document.getElementById('m3Question'), g:document.getElementById('m3Grid') };
+            const DOM = { c:document.getElementById('m3Cage'), a:document.getElementById('m3Animal'), p:document.getElementById('m3Padlock'), i:document.getElementById('m3Instruction'), q:document.getElementById('m3Question'), g:document.getElementById('m3Grid'), qBox:document.getElementById('m3QBox') };
             let st; const C = ['cyan','yellow','pink'];
             return {
                 start: () => { st={h:3,s:0,l:1,c:0,lck:false,an:''}; MainCtrl.updateSharedHUD(3,0,1,0); rC(); nQ(); }, stop: () => { st.lck=true; }
             };
             function rC(){ DOM.c.classList.remove('open'); DOM.p.classList.remove('padlock-broken'); st.an=ANIMAL_LIST[Math.floor(Math.random()*ANIMAL_LIST.length)]; DOM.a.innerText=st.an; }
-            function nQ(){ st.lck=false; let a, opts=[], txt, inst; if(Math.random()>0.5){ inst="Isi Angka Hilang!"; const s=Math.floor(Math.random()*10)+1, d=Math.floor(Math.random()*4)+1, sq=[s,s+d,s+2*d,s+3*d], hx=Math.floor(Math.random()*4); a=sq[hx]; sq[hx]='?'; txt=sq.join(', '); opts=[a]; while(opts.length<3){let f=a+(Math.floor(Math.random()*4)+1)*(Math.random()>0.5?1:-1); if(f>0&&!opts.includes(f))opts.push(f);} } else { const isB=Math.random()>0.5; inst=isB?"Pilih Paling BESAR!":"Pilih Paling KECIL!"; while(opts.length<3){let n=Math.floor(Math.random()*20)+1; if(!opts.includes(n))opts.push(n);} a=isB?Math.max(...opts):Math.min(...opts); txt="🔒"; } opts.sort(()=>Math.random()-0.5); DOM.i.innerText=inst; DOM.q.innerText=txt; DOM.g.innerHTML=''; opts.forEach((op,i)=>{ const btn=document.createElement('button'); btn.className=`clay-btn ${C[i]} text-white text-5xl font-kids py-6 pop-in`; btn.style.animationDelay=`${i*0.1}s`; btn.innerText=op; btn.onpointerdown=()=>{if(!st.lck)btn.classList.add('pressed');}; btn.onpointerup=()=>{if(btn.classList.contains('pressed')){btn.classList.remove('pressed'); ansC(op===a,btn);}}; btn.onpointerleave=()=>btn.classList.remove('pressed'); DOM.g.appendChild(btn); }); }
+            function nQ(){ 
+                st.lck = false; 
+                let a, opts = [], txt, inst; 
+                const randType = Math.random();
+
+                if (randType < 0.33) { 
+                    inst = "Isi Angka Hilang!"; 
+                    const s = Math.floor(Math.random() * 10) + 1;
+                    const d = Math.floor(Math.random() * 4) + 1;
+                    const sq = [s, s + d, s + 2*d, s + 3*d];
+                    const hx = Math.floor(Math.random() * 4); 
+                    a = sq[hx]; sq[hx] = '?'; txt = sq.join(', '); opts = [a]; 
+                    while (opts.length < 3) {
+                        let f = a + (Math.floor(Math.random() * 4) + 1) * (Math.random() > 0.5 ? 1 : -1); 
+                        if (f > 0 && !opts.includes(f)) opts.push(f);
+                    } 
+                    opts.sort(() => Math.random() - 0.5);
+                } else if (randType < 0.66) { 
+                    const isB = Math.random() > 0.5; 
+                    inst = isB ? "Pilih Paling BESAR!" : "Pilih Paling KECIL!"; 
+                    while (opts.length < 3) {
+                        let n = Math.floor(Math.random() * 20) + 1; 
+                        if (!opts.includes(n)) opts.push(n);
+                    } 
+                    a = isB ? Math.max(...opts) : Math.min(...opts); 
+                    txt = "🔒"; 
+                    opts.sort(() => Math.random() - 0.5);
+                } else {
+                    inst = "Pilih Tanda Tepat!";
+                    const num1 = Math.floor(Math.random() * 20) + 1;
+                    const num2 = Math.floor(Math.random() * 20) + 1;
+                    txt = `${num1} ... ${num2}`;
+                    if (num1 < num2) a = '<';
+                    else if (num1 > num2) a = '>';
+                    else a = '=';
+                    opts = ['<', '=', '>']; // Always these three
+                }
+
+                DOM.i.innerText = inst; DOM.q.innerText = txt; 
+                if(DOM.qBox) {
+                    DOM.qBox.style.transform = 'scale(0.5)'; DOM.qBox.style.opacity = '0';
+                    setTimeout(() => { DOM.qBox.style.transform = 'scale(1)'; DOM.qBox.style.opacity = '1'; }, 50);
+                }
+
+                DOM.g.innerHTML = ''; 
+                opts.forEach((op, i) => { 
+                    const btn = document.createElement('button'); 
+                    btn.className = `clay-btn ${C[i]} text-white text-5xl font-kids py-6 pop-in`; 
+                    btn.style.animationDelay = `${i * 0.1}s`; btn.innerText = op; 
+                    btn.onpointerdown = () => { if(!st.lck) btn.classList.add('pressed'); }; 
+                    btn.onpointerup = () => { if(btn.classList.contains('pressed') && !st.lck) { btn.classList.remove('pressed'); ansC(op === a, btn); } }; 
+                    btn.onpointerleave = () => btn.classList.remove('pressed'); 
+                    DOM.g.appendChild(btn); 
+                }); 
+            }
             function ansC(isC, btn){ st.lck=true; Array.from(DOM.g.children).forEach(b=>{if(b!==btn)b.classList.add('disabled');}); if(isC){ st.c++; st.s+=20+(st.c>1?10:0); AudioSys.m3Unlock(); DOM.p.classList.add('padlock-broken'); const cl=MainCtrl.getCenter(DOM.p); FX.burst(cl.x,cl.y,20); setTimeout(()=>{ DOM.c.classList.add('open'); AudioSys.m1Correct(); const ca=MainCtrl.getCenter(DOM.a); FX.burst(ca.x,ca.y-50,50); FX.text(ca.x,ca.y-100,"TERSELAMATKAN!",'#4ECDC4'); StorageController.addAnimal(st.an); MainCtrl.updateSharedHUD(st.h,st.s,st.l,st.c); setTimeout(()=>{st.l++;rC();nQ();},2000); },500); } else { st.c=0; st.h--; AudioSys.m1Wrong(); btn.classList.add('disabled'); DOM.p.classList.add('anim-shake'); setTimeout(()=>DOM.p.classList.remove('anim-shake'),400); const cl=MainCtrl.getCenter(DOM.p); FX.text(cl.x,cl.y-50,"MACET!",'#FF6B6B'); MainCtrl.updateSharedHUD(st.h,st.s,st.l,st.c); setTimeout(()=>{if(st.h<=0)MainCtrl.gameOver(st.s,3); else nQ();},1000); } }
         })();
 
@@ -992,20 +1170,12 @@
                 targetPrice: document.getElementById('m4TargetPrice'), paidAmt: document.getElementById('m4PaidAmount')
             };
 
-            const ITEMS = [
-                { id: 'apple', emoji: '🍎', price: 2 }, { id: 'banana', emoji: '🍌', price: 3 },
-                { id: 'melon', emoji: '🍉', price: 4 }, { id: 'grape', emoji: '🍇', price: 5 }
-            ];
+            const ITEMS = [ { id: 'apple', emoji: '🍎', price: 2 }, { id: 'banana', emoji: '🍌', price: 3 }, { id: 'melon', emoji: '🍉', price: 4 }, { id: 'grape', emoji: '🍇', price: 5 } ];
             const CASHIERS = ['👨‍🌾','👩‍🌾','🐻','🐰','🍏','🍊'];
 
             let st = { hp: 3, score: 0, level: 1, combo: 0, locked: false, targetItems: {}, cartItems: {}, totalPrice: 0, paid: 0, phase: 1 };
 
-            function start() {
-                st = { hp: 3, score: 0, level: 1, combo: 0, locked: false };
-                MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
-                nextTask();
-            }
-
+            function start() { st = { hp: 3, score: 0, level: 1, combo: 0, locked: false }; MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo); nextTask(); }
             function stop() { st.locked = true; }
 
             function nextTask() {
@@ -1014,126 +1184,219 @@
                 DOM.phase2.classList.add('hidden'); DOM.phase2.classList.remove('flex');
                 DOM.cashier.innerText = CASHIERS[Math.floor(Math.random() * CASHIERS.length)];
                 
-                const typesCount = st.level <= 2 ? 1 : 2;
-                let available = [...ITEMS].sort(() => Math.random() - 0.5);
-                st.targetItems = {}; st.totalPrice = 0;
-                DOM.targetList.innerHTML = '';
-
+                const typesCount = st.level <= 2 ? 1 : 2; let available = [...ITEMS].sort(() => Math.random() - 0.5); st.targetItems = {}; st.totalPrice = 0; DOM.targetList.innerHTML = '';
                 for(let i=0; i<typesCount; i++) {
-                    const item = available[i];
-                    const qty = Math.floor(Math.random() * 2) + 1; // 1 or 2
-                    st.targetItems[item.id] = { emoji: item.emoji, qty: qty, price: item.price };
-                    st.totalPrice += (qty * item.price);
-                    
-                    const el = document.createElement('span'); el.className = "bg-pink-100 px-2 rounded-lg border-2 border-pink-300 pop-in";
-                    el.innerText = `${qty}x ${item.emoji}`; el.style.animationDelay = `${i*0.1}s`;
-                    DOM.targetList.appendChild(el);
+                    const item = available[i]; const qty = Math.floor(Math.random() * 2) + 1;
+                    st.targetItems[item.id] = { emoji: item.emoji, qty: qty, price: item.price }; st.totalPrice += (qty * item.price);
+                    const el = document.createElement('span'); el.className = "bg-pink-100 px-2 rounded-lg border-2 border-pink-300 pop-in"; el.innerText = `${qty}x ${item.emoji}`; el.style.animationDelay = `${i*0.1}s`; DOM.targetList.appendChild(el);
                 }
-
-                DOM.taskPrompt.innerText = "Tolong ambilkan:";
-                DOM.taskPrompt.className = "font-kids text-sm text-pink-600";
-                DOM.bubble.className = "clay-card p-4 relative border-4 border-pink-200";
-                
+                DOM.taskPrompt.innerText = "Tolong ambilkan:"; DOM.taskPrompt.className = "font-kids text-sm text-pink-600"; DOM.bubble.className = "clay-card p-4 relative border-4 border-pink-200";
                 renderShelf(); renderCart();
             }
 
             function renderShelf() {
                 DOM.shelf.innerHTML = '';
                 ITEMS.forEach((item, idx) => {
-                    const btn = document.createElement('button');
-                    btn.className = "shelf-item-btn pop-in"; btn.style.animationDelay = `${idx*0.1}s`;
-                    btn.innerHTML = `${item.emoji}<div class="price-tag">${item.price}🪙</div>`;
-                    
+                    const btn = document.createElement('button'); btn.className = "shelf-item-btn pop-in"; btn.style.animationDelay = `${idx*0.1}s`; btn.innerHTML = `${item.emoji}<div class="price-tag">${item.price}🪙</div>`;
                     btn.onclick = () => {
-                        if(st.locked || st.phase !== 1) return;
-                        AudioSys.m4Pop(); btn.style.transform = 'scale(0.9)'; setTimeout(()=>btn.style.transform='', 100);
-                        
-                        if(!st.cartItems[item.id]) st.cartItems[item.id] = 0;
-                        st.cartItems[item.id]++;
-                        renderCart(); checkCart();
-                    };
-                    DOM.shelf.appendChild(btn);
+                        if(st.locked || st.phase !== 1) return; AudioSys.m4Pop(); btn.style.transform = 'scale(0.9)'; setTimeout(()=>btn.style.transform='', 100);
+                        if(!st.cartItems[item.id]) st.cartItems[item.id] = 0; st.cartItems[item.id]++; renderCart(); checkCart();
+                    }; DOM.shelf.appendChild(btn);
                 });
             }
 
-            function renderCart() {
-                DOM.cart.innerHTML = '';
-                Object.keys(st.cartItems).forEach(id => {
-                    const itemData = ITEMS.find(i => i.id === id);
-                    for(let i=0; i<st.cartItems[id]; i++) {
-                        const el = document.createElement('span'); el.className = "anim-float"; el.innerText = itemData.emoji;
-                        DOM.cart.appendChild(el);
-                    }
-                });
-            }
+            function renderCart() { DOM.cart.innerHTML = ''; Object.keys(st.cartItems).forEach(id => { const itemData = ITEMS.find(i => i.id === id); for(let i=0; i<st.cartItems[id]; i++) { const el = document.createElement('span'); el.className = "anim-float"; el.innerText = itemData.emoji; DOM.cart.appendChild(el); } }); }
 
             function checkCart() {
                 let isMatch = true; let isOver = false;
-                
-                Object.keys(st.cartItems).forEach(id => {
-                    if(!st.targetItems[id] || st.cartItems[id] > st.targetItems[id].qty) isOver = true;
-                });
-
+                Object.keys(st.cartItems).forEach(id => { if(!st.targetItems[id] || st.cartItems[id] > st.targetItems[id].qty) isOver = true; });
                 if(isOver) {
-                    st.locked = true; st.hp--; st.combo = 0; AudioSys.m1Wrong();
-                    MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
-                    DOM.bubble.className = "clay-card p-4 relative border-4 border-red-400 bg-red-50";
-                    DOM.taskPrompt.innerText = "UPS! Salah ambil!"; DOM.taskPrompt.className = "font-kids text-sm text-red-600";
+                    st.locked = true; st.hp--; st.combo = 0; AudioSys.m1Wrong(); MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
+                    DOM.bubble.className = "clay-card p-4 relative border-4 border-red-400 bg-red-50"; DOM.taskPrompt.innerText = "UPS! Salah ambil!"; DOM.taskPrompt.className = "font-kids text-sm text-red-600";
                     const c = MainCtrl.getCenter(DOM.cart); FX.smoke(c.x, c.y, 10);
-                    
-                    setTimeout(() => {
-                        if(st.hp <= 0) MainCtrl.gameOver(st.score, 4);
-                        else { st.cartItems = {}; renderCart(); st.locked = false; DOM.bubble.className = "clay-card p-4 relative border-4 border-pink-200 bg-white"; DOM.taskPrompt.innerText = "Tolong ambilkan:"; DOM.taskPrompt.className = "font-kids text-sm text-pink-600"; }
-                    }, 1000);
-                    return;
+                    setTimeout(() => { if(st.hp <= 0) MainCtrl.gameOver(st.score, 4); else { st.cartItems = {}; renderCart(); st.locked = false; DOM.bubble.className = "clay-card p-4 relative border-4 border-pink-200 bg-white"; DOM.taskPrompt.innerText = "Tolong ambilkan:"; DOM.taskPrompt.className = "font-kids text-sm text-pink-600"; } }, 1000); return;
                 }
-
-                Object.keys(st.targetItems).forEach(id => {
-                    if(st.cartItems[id] !== st.targetItems[id].qty) isMatch = false;
-                });
-
+                Object.keys(st.targetItems).forEach(id => { if(st.cartItems[id] !== st.targetItems[id].qty) isMatch = false; });
                 if(isMatch) {
                     st.locked = true; st.phase = 2; AudioSys.m1Correct();
-                    DOM.taskPrompt.innerText = "Bagus! Sekarang bayar."; DOM.taskPrompt.className = "font-kids text-sm text-green-600";
-                    DOM.bubble.className = "clay-card p-4 relative border-4 border-green-300 bg-green-50";
-                    
-                    setTimeout(() => {
-                        DOM.phase1.classList.add('hidden'); DOM.phase1.classList.remove('flex');
-                        DOM.phase2.classList.remove('hidden'); DOM.phase2.classList.add('flex');
-                        DOM.targetPrice.innerText = st.totalPrice; DOM.paidAmt.innerText = 0;
-                        AudioSys.m4Talk();
-                        st.locked = false;
-                    }, 1000);
+                    DOM.taskPrompt.innerText = "Bagus! Sekarang bayar."; DOM.taskPrompt.className = "font-kids text-sm text-green-600"; DOM.bubble.className = "clay-card p-4 relative border-4 border-green-300 bg-green-50";
+                    setTimeout(() => { DOM.phase1.classList.add('hidden'); DOM.phase1.classList.remove('flex'); DOM.phase2.classList.remove('hidden'); DOM.phase2.classList.add('flex'); DOM.targetPrice.innerText = st.totalPrice; DOM.paidAmt.innerText = 0; AudioSys.m4Talk(); st.locked = false; }, 1000);
                 }
             }
 
             function addCoin(val) {
                 if(st.locked || st.phase !== 2) return;
-                AudioSys.m4Coin(); st.paid += val;
-                DOM.paidAmt.innerText = st.paid;
-                DOM.paidAmt.classList.add('anim-jump'); setTimeout(()=>DOM.paidAmt.classList.remove('anim-jump'), 300);
-
+                AudioSys.m4Coin(); st.paid += val; DOM.paidAmt.innerText = st.paid; DOM.paidAmt.classList.add('anim-jump'); setTimeout(()=>DOM.paidAmt.classList.remove('anim-jump'), 300);
                 if(st.paid > st.totalPrice) {
-                    st.locked = true; st.hp--; st.combo = 0; AudioSys.m1Wrong();
-                    MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
+                    st.locked = true; st.hp--; st.combo = 0; AudioSys.m1Wrong(); MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
                     DOM.taskPrompt.innerText = "Uangnya kebanyakan!"; DOM.taskPrompt.className = "font-kids text-sm text-red-600";
-                    setTimeout(() => {
-                        if(st.hp <= 0) MainCtrl.gameOver(st.score, 4);
-                        else { st.paid = 0; DOM.paidAmt.innerText = 0; st.locked = false; DOM.taskPrompt.innerText = "Bagus! Sekarang bayar."; DOM.taskPrompt.className = "font-kids text-sm text-green-600"; }
-                    }, 1000);
-                } 
-                else if(st.paid === st.totalPrice) {
-                    st.locked = true; st.combo++; st.score += 20 + (st.combo > 1 ? 10 : 0);
-                    AudioSys.sfxLevelUp();
+                    setTimeout(() => { if(st.hp <= 0) MainCtrl.gameOver(st.score, 4); else { st.paid = 0; DOM.paidAmt.innerText = 0; st.locked = false; DOM.taskPrompt.innerText = "Bagus! Sekarang bayar."; DOM.taskPrompt.className = "font-kids text-sm text-green-600"; } }, 1000);
+                } else if(st.paid === st.totalPrice) {
+                    st.locked = true; st.combo++; st.score += 20 + (st.combo > 1 ? 10 : 0); AudioSys.sfxLevelUp();
                     const c = MainCtrl.getCenter(DOM.phase2); FX.burst(c.x, c.y, 40); FX.text(c.x, c.y-50, "TERIMA KASIH!", '#FF9F43');
-                    DOM.taskPrompt.innerText = "Uangnya Pas!";
-                    MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
-                    
+                    DOM.taskPrompt.innerText = "Uangnya Pas!"; MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
                     setTimeout(() => { st.level++; nextTask(); }, 1500);
                 }
             }
-
             return { start, stop, addCoin };
+        })();
+
+        // MODE 5: POP-POP BALLOONS
+        const Mode5 = (function() {
+            const DOM = { cont: document.getElementById('m5BalloonsContainer'), prompt: document.getElementById('m5TargetText'), spk: document.getElementById('m5BtnSpeaker') };
+            let st = { hp: 3, score: 0, level: 1, combo: 0, locked: false, target: 1 };
+            const C = ['bg-pink-400', 'bg-cyan-400', 'bg-yellow-400', 'bg-purple-400', 'bg-green-400'];
+
+            function start() {
+                st = { hp: 3, score: 0, level: 1, combo: 0, locked: false }; MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
+                DOM.spk.onclick = () => { if(!st.locked) { AudioSys.m4Talk(); DOM.prompt.parentElement.classList.add('anim-shake'); setTimeout(()=>DOM.prompt.parentElement.classList.remove('anim-shake'), 400); } };
+                nextLvl();
+            }
+
+            function stop() { st.locked = true; }
+
+            function nextLvl() {
+                st.locked = false; st.target = Math.floor(Math.random() * 10) + 1;
+                DOM.prompt.innerText = st.target;
+                
+                let opts = [st.target];
+                while(opts.length < 3) {
+                    let f = st.target + (Math.floor(Math.random()*4)+1) * (Math.random()>0.5?1:-1);
+                    if(f > 0 && f <= 15 && !opts.includes(f)) opts.push(f);
+                }
+                opts.sort(() => Math.random() - 0.5);
+
+                DOM.cont.innerHTML = '';
+                opts.forEach((opt, idx) => {
+                    const b = document.createElement('div');
+                    b.className = `balloon ${C[idx%C.length]} pop-in cursor-pointer hover:brightness-110`;
+                    b.style.animationDelay = `${idx*0.1}s`;
+                    
+                    // Add string
+                    const str = document.createElement('div'); str.className = 'balloon-string'; b.appendChild(str);
+                    
+                    // Add stars
+                    for(let i=0; i<opt; i++) {
+                        const s = document.createElement('span'); s.className = 'star-icon text-yellow-300'; s.innerText = '⭐';
+                        b.appendChild(s);
+                    }
+
+                    b.onpointerdown = () => {
+                        if(st.locked) return;
+                        if(opt === st.target) {
+                            st.locked = true; st.combo++; st.score += 15 + (st.combo > 1 ? 5 : 0);
+                            AudioSys.m5Pop(); const c = MainCtrl.getCenter(b); FX.burst(c.x, c.y, 40); b.style.transform = 'scale(0)'; b.style.opacity = '0';
+                            setTimeout(() => { AudioSys.m1Correct(); FX.text(c.x, c.y-50, "HEBAT!", '#4ECDC4'); MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo); setTimeout(()=>{st.level++; nextLvl();}, 1000); }, 300);
+                        } else {
+                            st.locked = true; st.combo = 0; st.hp--; AudioSys.m1Wrong();
+                            b.classList.add('anim-shake'); const c = MainCtrl.getCenter(b); FX.smoke(c.x, c.y, 10); FX.text(c.x, c.y-50, "UPS!", '#FF6B6B'); MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
+                            setTimeout(() => { b.classList.remove('anim-shake'); if(st.hp <= 0) MainCtrl.gameOver(st.score, 5); else st.locked = false; }, 800);
+                        }
+                    };
+                    
+                    const wrap = document.createElement('div'); wrap.className = 'anim-float'; wrap.style.animationDelay = `${idx*0.3}s`;
+                    wrap.appendChild(b); DOM.cont.appendChild(wrap);
+                });
+                
+                setTimeout(() => DOM.spk.onclick(), 500);
+            }
+            return { start, stop };
+        })();
+
+        // MODE 6: ROBOT PENCARI PASANGAN
+        const Mode6 = (function() {
+            const DOM = { area: document.getElementById('m6Area'), src: document.getElementById('m6Source'), rbts: document.getElementById('m6Robots'), svg: document.getElementById('m6Svg'), line: document.getElementById('m6Line') };
+            let st = { hp: 3, score: 0, level: 1, combo: 0, locked: false, target: 1 };
+            let isDrawing = false;
+            
+            const ICONS = ['🏀','🍪','🍓','🍬','🚗','🧸'];
+
+            function start() {
+                st = { hp: 3, score: 0, level: 1, combo: 0, locked: false }; MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
+                window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onUp);
+                nextLvl();
+            }
+
+            function stop() { st.locked = true; window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); }
+
+            function nextLvl() {
+                st.locked = false; DOM.line.style.opacity = '0';
+                st.target = Math.floor(Math.random() * 10) + 1;
+                
+                // Left box items
+                DOM.src.innerHTML = '';
+                const ic = ICONS[Math.floor(Math.random() * ICONS.length)];
+                for(let i=0; i<st.target; i++) {
+                    const span = document.createElement('span'); span.className = 'm6-item pop-in'; span.style.animationDelay = `${i*0.05}s`; span.innerText = ic; DOM.src.appendChild(span);
+                }
+
+                DOM.src.onpointerdown = onDown;
+
+                // Right robots
+                let opts = [st.target];
+                while(opts.length < 3) {
+                    let f = st.target + (Math.floor(Math.random()*4)+1) * (Math.random()>0.5?1:-1);
+                    if(f > 0 && f <= 15 && !opts.includes(f)) opts.push(f);
+                }
+                opts.sort(() => Math.random() - 0.5);
+
+                DOM.rbts.innerHTML = '';
+                opts.forEach((opt, idx) => {
+                    const r = document.createElement('div'); r.className = 'robot-container pop-in anim-breathe'; r.style.animationDelay = `${idx*0.2}s`; r.dataset.val = opt;
+                    r.innerHTML = `
+                        <div class="robot-body">
+                            <div class="robot-head"><div class="robot-eye"></div><div class="robot-eye"></div></div>
+                            <div class="robot-screen">${opt}</div>
+                        </div>
+                    `;
+                    DOM.rbts.appendChild(r);
+                });
+            }
+
+            function onDown(e) {
+                if(st.locked) return;
+                isDrawing = true;
+                const r = DOM.src.getBoundingClientRect();
+                DOM.line.setAttribute('x1', r.left + r.width/2); DOM.line.setAttribute('y1', r.top + r.height/2);
+                DOM.line.setAttribute('x2', e.clientX); DOM.line.setAttribute('y2', e.clientY);
+                DOM.line.style.opacity = '1'; DOM.svg.style.zIndex = '50';
+            }
+
+            function onMove(e) {
+                if(!isDrawing) return;
+                DOM.line.setAttribute('x2', e.clientX); DOM.line.setAttribute('y2', e.clientY);
+            }
+
+            function onUp(e) {
+                if(!isDrawing) return;
+                isDrawing = false; DOM.svg.style.zIndex = '10';
+                
+                const targetEl = document.elementFromPoint(e.clientX, e.clientY);
+                const robot = targetEl ? targetEl.closest('.robot-container') : null;
+
+                if(robot) {
+                    st.locked = true;
+                    const val = parseInt(robot.dataset.val);
+                    const rC = MainCtrl.getCenter(robot);
+                    
+                    if(val === st.target) {
+                        st.combo++; st.score += 20 + (st.combo > 1 ? 10 : 0); AudioSys.m1Correct();
+                        DOM.line.style.opacity = '0';
+                        robot.classList.add('anim-jump'); FX.burst(rC.x, rC.y, 40); FX.text(rC.x, rC.y-50, "TEPAT!", '#fef08a');
+                        MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
+                        setTimeout(() => { robot.classList.remove('anim-jump'); st.level++; nextLvl(); }, 1200);
+                    } else {
+                        st.combo = 0; st.hp--; AudioSys.m1Wrong(); DOM.line.style.opacity = '0';
+                        robot.classList.add('anim-shake'); FX.smoke(rC.x, rC.y, 10); FX.text(rC.x, rC.y-50, "TETOT!", '#FF6B6B');
+                        MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
+                        setTimeout(() => { robot.classList.remove('anim-shake'); if(st.hp <= 0) MainCtrl.gameOver(st.score, 6); else st.locked = false; }, 800);
+                    }
+                } else {
+                    DOM.line.style.opacity = '0'; 
+                }
+            }
+
+            return { start, stop };
         })();
 
         // Bootstrap App
