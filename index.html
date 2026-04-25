@@ -33,6 +33,12 @@
             touch-action: none;
         }
 
+        /* --- CUSTOM SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.4); }
+
         .font-kids { font-family: 'Fredoka One', cursive; }
 
         /* --- STAGE BACKGROUND & PLATFORMS --- */
@@ -106,8 +112,7 @@
         /* --- MONSTERS & PROPS --- */
         .jelly-monster {
             border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; animation: amoebaMorph 4s ease-in-out infinite alternate;
-            box-shadow: inset 15px 15px 25px rgba(255,255,255,0.5), inset -15px -15px 25px rgba(0,0,0,0.3), 0 20px 30px rgba(0,0,0,0.2); transition: background-color 0.5s ease, transform 0.3s;
-            will-change: transform;
+            box-shadow: inset 15px 15px 25px rgba(255,255,255,0.5), inset -15px -15px 25px rgba(0,0,0,0.3), 0 20px 30px rgba(0,0,0,0.2);
         }
         @keyframes amoebaMorph { 0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; } 50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; } 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; } }
 
@@ -335,19 +340,23 @@
     <!-- META: ZOO SCREEN                               -->
     <!-- ============================================== -->
     <div id="uiZoo" class="absolute inset-0 zoo-bg z-40 hidden flex-col transition-opacity duration-500">
-        <header class="w-full p-4 flex justify-between items-center bg-white/50 backdrop-blur-md shadow-sm pointer-events-auto">
+        <header class="w-full p-4 flex justify-between items-center bg-white/50 backdrop-blur-md shadow-sm pointer-events-auto shrink-0">
             <button class="btnMetaHome clay-card w-12 h-12 flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-200">🏠</button>
             <div class="bg-white px-4 py-2 rounded-full border-4 border-yellow-300 shadow-md flex items-center gap-2">
                 <span class="text-xl">🌟</span>
                 <span class="font-kids text-xl text-yellow-600 metaStarsDisplay">0</span>
             </div>
         </header>
-        <div class="flex-1 overflow-y-auto p-6 pb-24">
+        
+        <div class="flex-1 overflow-y-auto p-6">
             <h1 class="font-kids text-3xl text-green-700 text-center mb-6 drop-shadow-sm">Koleksi Hewan</h1>
             <div class="grid grid-cols-3 md:grid-cols-4 gap-4" id="zooGrid"></div>
         </div>
-        <div class="absolute bottom-6 w-full px-6 max-w-sm left-1/2 -translate-x-1/2">
-            <button id="btnFeedZoo" class="clay-btn pink text-white font-kids text-xl py-4 w-full shadow-xl flex items-center justify-center gap-2">🍎 Beri Makan (10 🌟)</button>
+        
+        <div class="w-full p-6 pt-2 flex justify-center shrink-0 pointer-events-auto">
+            <div class="w-full max-w-sm">
+                <button id="btnFeedZoo" class="clay-btn pink text-white font-kids text-xl py-4 w-full shadow-xl flex items-center justify-center gap-2">🍎 Beri Makan (10 🌟)</button>
+            </div>
         </div>
     </div>
 
@@ -444,7 +453,8 @@
             <div class="text-white text-2xl anim-float">⬇️</div>
         </div>
         <main id="eatPlayArea" class="flex-1 relative w-full h-full overflow-hidden touch-none pt-24">
-            <div id="m2Monster" class="absolute bottom-10 left-1/2 -translate-x-1/2 w-40 h-40 jelly-monster bg-orange-400 flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)] transition-transform will-change-transform">
+            <!-- REVERTED TO JELLY BLOB STABLE -->
+            <div id="m2Monster" class="absolute bottom-10 left-1/2 -translate-x-1/2 w-40 h-40 jelly-monster bg-orange-400 flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)] transition-colors duration-500">
                 <div class="absolute top-6 flex gap-8">
                     <div class="w-4 h-6 bg-black rounded-full anim-blink" id="m2EyeL"><div class="w-2 h-2 bg-white rounded-full mt-1 ml-1"></div></div>
                     <div class="w-4 h-6 bg-black rounded-full anim-blink" id="m2EyeR"><div class="w-2 h-2 bg-white rounded-full mt-1 ml-1"></div></div>
@@ -529,7 +539,6 @@
                 </div>
                 
                 <div class="flex justify-center gap-4 mt-4 w-full pb-8">
-                    <!-- Koin bentuk membulat sesuai request -->
                     <button class="coin-btn" onclick="Mode4.addCoin(1)">🪙 1</button>
                     <button class="coin-btn" onclick="Mode4.addCoin(2)">🪙 2</button>
                     <button class="coin-btn" onclick="Mode4.addCoin(5)">🪙 5</button>
@@ -679,10 +688,22 @@
          * ==========================================
          */
         const FX = (function() {
-            const canvas = document.getElementById('fx-canvas'); const ctx = canvas.getContext('2d');
+            let canvas, ctx;
             let items = []; let w, h; const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FFF', '#A8E6CF', '#C4A1FF'];
-            function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-            window.addEventListener('resize', resize); resize();
+            
+            function init() {
+                canvas = document.getElementById('fx-canvas'); 
+                if(!canvas) return;
+                ctx = canvas.getContext('2d');
+                window.addEventListener('resize', resize); resize();
+                loop();
+            }
+
+            function resize() { 
+                if(!canvas) return;
+                w = canvas.width = window.innerWidth; 
+                h = canvas.height = window.innerHeight; 
+            }
 
             class Confetti {
                 constructor(x, y) { this.x = x; this.y = y; this.color = colors[Math.floor(Math.random() * colors.length)]; const a = (Math.random() * Math.PI) + Math.PI; const s = Math.random() * 15 + 5; this.vx = Math.cos(a) * s; this.vy = Math.sin(a) * s; this.w = Math.random() * 10 + 5; this.rot = Math.random() * 360; this.rotS = (Math.random() - 0.5) * 20; this.life = 1; }
@@ -701,9 +722,16 @@
                 draw() { this.x += this.vx; this.y += this.vy; this.size += 0.5; this.life -= 0.015; ctx.save(); ctx.globalAlpha = Math.max(0, this.life * 0.6); ctx.fillStyle = '#A0AEC0'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); ctx.restore(); }
             }
 
-            function loop() { ctx.clearRect(0, 0, w, h); items = items.filter(i => { i.draw(); return i.life > 0; }); requestAnimationFrame(loop); } loop();
+            function loop() { 
+                if(ctx) {
+                    ctx.clearRect(0, 0, w, h); 
+                    items = items.filter(i => { i.draw(); return i.life > 0; }); 
+                }
+                requestAnimationFrame(loop); 
+            }
 
             return {
+                init,
                 burst: (x, y, c=30) => { for(let i=0; i<c; i++) items.push(new Confetti(x, y)); },
                 text: (x, y, s, c) => items.push(new FloatText(x, y, s, c)),
                 beam: (x1, y1, x2, y2, c) => items.push(new Beam(x1, y1, x2, y2, c)),
@@ -717,15 +745,24 @@
          * ==========================================
          */
         const MetaCtrl = (function() {
-            const zoo = document.getElementById('uiZoo'); const hats = document.getElementById('uiHats');
-            const zooGrid = document.getElementById('zooGrid'); const hatsGrid = document.getElementById('hatsGrid');
+            let zoo, hats, zooGrid, hatsGrid;
             let selectedAnimal = null;
             
-            function openZoo() { AudioSys.init(); AudioSys.startBGM(); zoo.classList.remove('hidden'); setTimeout(()=>zoo.classList.remove('opacity-0'), 50); renderZoo(); }
-            function openHats() { AudioSys.init(); AudioSys.startBGM(); hats.classList.remove('hidden'); setTimeout(()=>hats.classList.remove('opacity-0'), 50); renderHats(); }
-            function closeAll() { zoo.classList.add('opacity-0'); hats.classList.add('opacity-0'); setTimeout(()=>{zoo.classList.add('hidden'); hats.classList.add('hidden');}, 500); }
+            function initDOM() {
+                if(!zoo) {
+                    zoo = document.getElementById('uiZoo'); 
+                    hats = document.getElementById('uiHats');
+                    zooGrid = document.getElementById('zooGrid'); 
+                    hatsGrid = document.getElementById('hatsGrid');
+                }
+            }
+
+            function openZoo() { initDOM(); AudioSys.init(); AudioSys.startBGM(); zoo.classList.remove('hidden'); setTimeout(()=>zoo.classList.remove('opacity-0'), 50); renderZoo(); }
+            function openHats() { initDOM(); AudioSys.init(); AudioSys.startBGM(); hats.classList.remove('hidden'); setTimeout(()=>hats.classList.remove('opacity-0'), 50); renderHats(); }
+            function closeAll() { initDOM(); zoo.classList.add('opacity-0'); hats.classList.add('opacity-0'); setTimeout(()=>{zoo.classList.add('hidden'); hats.classList.add('hidden');}, 500); }
 
             function renderZoo() {
+                initDOM();
                 const s = StorageController.getStars(); const o = StorageController.getAnimals(); const sizes = StorageController.getAnimalSizes();
                 document.querySelectorAll('.metaStarsDisplay').forEach(el => el.innerText = s);
                 zooGrid.innerHTML = '';
@@ -749,6 +786,7 @@
             }
 
             function renderHats() {
+                initDOM();
                 const s = StorageController.getStars(); const o = StorageController.getHats(); const eq = StorageController.getEqHat();
                 document.querySelectorAll('.metaStarsDisplay').forEach(el => el.innerText = s);
                 document.getElementById('hatPreview').innerText = eq;
@@ -782,7 +820,8 @@
                 });
             }
 
-            document.getElementById('btnFeedZoo').onclick = (e) => {
+            function feedZooAction(e) {
+                initDOM();
                 const o = StorageController.getAnimals();
                 const btnCenter = MainCtrl.getCenter(e.currentTarget);
                 
@@ -824,9 +863,9 @@
                     e.currentTarget.classList.add('anim-shake');
                     setTimeout(() => e.currentTarget.classList.remove('anim-shake'), 400);
                 }
-            };
+            }
 
-            return { openZoo, openHats, closeAll };
+            return { openZoo, openHats, closeAll, feedZooAction };
         })();
 
         /**
@@ -835,24 +874,26 @@
          * ==========================================
          */
         const MainCtrl = (function() {
-            const DOM = {
-                ui: { start: document.getElementById('uiStart'), count: document.getElementById('uiCountdown'), end: document.getElementById('uiEnd'), sharedHUD: document.getElementById('uiSharedHUD') },
-                countTxt: document.getElementById('countdownText'),
-                hud: { hearts: document.getElementById('heartContainer').children, score: document.getElementById('valScore'), level: document.getElementById('valLevel'), combo: document.getElementById('valCombo'), comboBadge: document.getElementById('comboBadge'), hpText: document.getElementById('hudHpText') },
-                btns: { 
-                    m1: document.getElementById('btnStartMode1'), 
-                    m2: document.getElementById('btnStartMode2'), 
-                    m3: document.getElementById('btnStartMode3'), 
-                    m4: document.getElementById('btnStartMode4'), 
-                    m5: document.getElementById('btnStartMode5'), 
-                    m6: document.getElementById('btnStartMode6') 
-                }
-            };
-
+            let DOM;
             let currentMode = null; let activeGame = null;
             const AMOEBA_COLORS = ['bg-purple-500', 'bg-blue-400', 'bg-green-400', 'bg-rose-400', 'bg-teal-400', 'bg-orange-400', 'bg-indigo-400'];
 
             function init() {
+                FX.init();
+                DOM = {
+                    ui: { start: document.getElementById('uiStart'), count: document.getElementById('uiCountdown'), end: document.getElementById('uiEnd'), sharedHUD: document.getElementById('uiSharedHUD') },
+                    countTxt: document.getElementById('countdownText'),
+                    hud: { hearts: document.getElementById('heartContainer').children, score: document.getElementById('valScore'), level: document.getElementById('valLevel'), combo: document.getElementById('valCombo'), comboBadge: document.getElementById('comboBadge'), hpText: document.getElementById('hudHpText') },
+                    btns: { 
+                        m1: document.getElementById('btnStartMode1'), 
+                        m2: document.getElementById('btnStartMode2'), 
+                        m3: document.getElementById('btnStartMode3'), 
+                        m4: document.getElementById('btnStartMode4'), 
+                        m5: document.getElementById('btnStartMode5'), 
+                        m6: document.getElementById('btnStartMode6') 
+                    }
+                };
+
                 updateStartUI(); updateHats();
                 
                 if(DOM.btns.m1) DOM.btns.m1.onclick = () => { currentMode = 1; DOM.hud.hpText.innerText = "NYAWA IDOL"; startSeq(); };
@@ -865,6 +906,8 @@
                 document.getElementById('btnZoo').onclick = () => { DOM.ui.start.classList.add('opacity-0', 'pointer-events-none'); MetaCtrl.openZoo(); };
                 document.getElementById('btnHats').onclick = () => { DOM.ui.start.classList.add('opacity-0', 'pointer-events-none'); MetaCtrl.openHats(); };
                 
+                document.getElementById('btnFeedZoo').onclick = MetaCtrl.feedZooAction;
+
                 document.getElementById('btnSave').onclick = () => {
                     if(!currentMode || !activeGame) return;
                     let currentScore = parseInt(document.getElementById('valScore').innerText) || 0;
@@ -968,10 +1011,13 @@
 
         // MODE 1
         const Mode1 = (function(){
-            const DOM = { p:document.getElementById('m1PlayerBox'), b:document.getElementById('m1Boss'), bF:{eL:document.getElementById('m1EyeL'),eR:document.getElementById('m1EyeR'),m:document.getElementById('m1Mouth')}, q:document.getElementById('m1Question'), g:document.getElementById('m1Grid'), d:document.getElementById('m1HpDots') };
+            let DOM;
             let st; const C = ['pink','cyan','yellow'];
             return {
-                start: () => { st = {h:3, s:0, l:1, mb:3, b:3, lck:false, c:0}; MainCtrl.updateSharedHUD(3,0,1,0); DOM.d.innerHTML=''; for(let i=0;i<3;i++) DOM.d.innerHTML+=`<div class="hp-dot"></div>`; DOM.b.className=`jelly-monster w-full h-full relative flex items-center justify-center ${MainCtrl.randColor()}`; nextQ(); },
+                start: () => { 
+                    DOM = { p:document.getElementById('m1PlayerBox'), b:document.getElementById('m1Boss'), bF:{eL:document.getElementById('m1EyeL'),eR:document.getElementById('m1EyeR'),m:document.getElementById('m1Mouth')}, q:document.getElementById('m1QBox').querySelector('span'), g:document.getElementById('m1Grid'), d:document.getElementById('m1HpDots') };
+                    st = {h:3, s:0, l:1, mb:3, b:3, lck:false, c:0}; MainCtrl.updateSharedHUD(3,0,1,0); DOM.d.innerHTML=''; for(let i=0;i<3;i++) DOM.d.innerHTML+=`<div class="hp-dot"></div>`; DOM.b.className=`jelly-monster w-full h-full relative flex items-center justify-center ${MainCtrl.randColor()}`; nextQ(); 
+                },
                 stop: () => { st.lck=true; }
             };
             function nextQ(){
@@ -996,53 +1042,57 @@
 
         // MODE 2
         const Mode2 = (function(){
-            const DOM = { 
-                a: document.getElementById('eatPlayArea'), m: document.getElementById('m2Monster'), 
-                f: document.getElementById('m2FoodContainer'), tt: document.getElementById('m2TargetText'), 
-                tc: document.getElementById('m2CurrentText'), b: document.getElementById('m2EatenBubble') 
-            };
+            let DOM;
             let st = {}; let ply = false, fds = [], lid, tmr;
-            let mx = window.innerWidth / 2, targetX = mx;
-            let drops = 0, nextCorr = 3;
             
             function hM(e) {
-                if(!ply) return; 
+                if(!ply || !DOM || !DOM.m) return; 
                 let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                targetX = Math.max(80, Math.min(window.innerWidth - 80, clientX)); 
+                let mx = Math.max(60, Math.min(window.innerWidth - 60, clientX)); 
+                DOM.m.style.left = `${mx}px`;
             }
 
             function start() { 
+                DOM = { 
+                    a: document.getElementById('eatPlayArea'), m: document.getElementById('m2Monster'), 
+                    f: document.getElementById('m2FoodContainer'), tt: document.getElementById('m2TargetText'), 
+                    tc: document.getElementById('m2CurrentText'), b: document.getElementById('m2EatenBubble') 
+                };
                 st = {h:3, s:0, l:1, c:0, t:10, cur:0}; 
                 MainCtrl.updateSharedHUD(3, 0, 1, 0); 
-                targetX = window.innerWidth / 2; mx = targetX;
                 
-                DOM.m.className = `absolute bottom-10 left-1/2 w-40 h-40 jelly-monster ${MainCtrl.randColor()} flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)] transition-transform will-change-transform`; 
-                DOM.m.style.transform = `translateX(-50%)`; DOM.m.style.left = `${mx}px`;
-                DOM.a.addEventListener('touchmove', hM, {passive: false}); DOM.a.addEventListener('mousemove', hM); 
+                DOM.m.className = `absolute bottom-10 left-1/2 -translate-x-1/2 w-40 h-40 jelly-monster ${MainCtrl.randColor()} flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)] transition-colors duration-500`; 
+                DOM.m.style.left = `50%`; 
+                
+                DOM.a.addEventListener('touchmove', hM, {passive: false}); 
+                DOM.a.addEventListener('mousemove', hM); 
                 
                 ply = true; fds = []; DOM.f.innerHTML = ''; 
-                nT(); loop(); drops = 0; nextCorr = Math.floor(Math.random() * 7) + 2; spwn(); 
+                nT(); loop(); spwn(); 
             }
 
             function stop() { 
                 ply = false; cancelAnimationFrame(lid); clearTimeout(tmr); 
-                DOM.a.removeEventListener('touchmove', hM); DOM.a.removeEventListener('mousemove', hM); 
+                if(DOM && DOM.a) { DOM.a.removeEventListener('touchmove', hM); DOM.a.removeEventListener('mousemove', hM); }
             }
             
             function nT() { 
-                st.cur = 0; DOM.tc.innerText = 0; DOM.b.classList.replace('opacity-100', 'opacity-0'); 
-                st.t = 5 + Math.floor(st.l * 1.5) + Math.floor(Math.random() * 5); DOM.tt.innerText = st.t; 
+                st.cur = 0; DOM.tc.innerText = 0; 
+                DOM.b.classList.replace('opacity-100', 'opacity-0'); 
+                st.t = 5 + Math.floor(st.l * 1.5) + Math.floor(Math.random() * 5); 
+                DOM.tt.innerText = st.t; 
             }
 
             function spwn() { 
-                if(!ply) return; 
+                if(!ply || !DOM) return; 
                 let nd = st.t - st.cur; 
-                if(nd <= 0) { tmr = setTimeout(spwn, Math.max(800, 2000 - (st.l * 100)) + Math.random() * 500); return; }
+                if(nd <= 0) { tmr = setTimeout(spwn, 1000); return; }
                 
-                const fd = document.createElement('div'); fd.className = 'falling-food'; 
-                let v; drops++;
+                const fd = document.createElement('div'); 
+                fd.className = 'falling-food'; 
+                let v; 
                 
-                if (drops >= nextCorr && nd <= 10) { v = nd; drops = 0; nextCorr = Math.floor(Math.random() * 7) + 2; } 
+                if (Math.random() > 0.3 && nd <= 8) v = nd; 
                 else {
                     if (Math.random() > 0.5 && nd > 1) v = Math.floor(Math.random() * (nd - 1)) + 1; 
                     else v = nd + Math.floor(Math.random() * 5) + 1;
@@ -1050,44 +1100,80 @@
                 }
                 
                 fd.innerText = v; 
-                const areaWidth = DOM.a.offsetWidth > 0 ? DOM.a.offsetWidth : window.innerWidth;
-                const x = 30 + Math.random() * (areaWidth - 90); 
-                fd.style.left = `${x}px`; fd.style.top = `-60px`; DOM.f.appendChild(fd); 
+                const areaWidth = window.innerWidth;
+                const x = 40 + Math.random() * (areaWidth - 80); 
                 
-                fds.push({e: fd, x: x, y: -60, v: v, s: 2 + (st.l * 0.5) + Math.random() * 2}); 
+                fd.style.left = `${x}px`; 
+                fd.style.top = `-60px`; 
+                DOM.f.appendChild(fd); 
+                
+                fds.push({e: fd, x: x, y: -60, v: v, s: 3 + (st.l * 0.5) + Math.random() * 2}); 
                 tmr = setTimeout(spwn, Math.max(800, 2000 - (st.l * 100)) + Math.random() * 500); 
             }
 
             function loop() { 
-                if(!ply) return; 
-                mx += (targetX - mx) * 0.2; DOM.m.style.left = `${mx}px`;
-                const mr = DOM.m.getBoundingClientRect(); const cx = mr.left + mr.width / 2; const cy = mr.top + mr.height / 2; 
+                if(!ply || !DOM) return; 
+                
+                const mr = DOM.m.getBoundingClientRect(); 
+                const cx = mr.left + mr.width / 2; 
+                const cy = mr.top + mr.height / 2; 
                 
                 for(let i = fds.length - 1; i >= 0; i--) {
-                    let f = fds[i]; f.y += f.s; f.e.style.transform = `translateY(${f.y}px)`; 
-                    const fr = f.e.getBoundingClientRect(); const fx = fr.left + fr.width / 2; const fy = fr.top + fr.height / 2;
-                    if (Math.hypot(cx - fx, cy - fy) < 60) { f.e.remove(); fds.splice(i, 1); hC(f.v, cx, cy - 40); } 
-                    else if (f.y > window.innerHeight) { f.e.remove(); fds.splice(i, 1); }
+                    let f = fds[i]; 
+                    f.y += f.s; 
+                    f.e.style.transform = `translateY(${f.y}px)`; 
+                    
+                    const fr = f.e.getBoundingClientRect(); 
+                    const fx = fr.left + fr.width / 2; 
+                    const fy = fr.top + fr.height / 2;
+                    
+                    if (Math.hypot(cx - fx, cy - fy) < 65) { 
+                        f.e.remove(); 
+                        fds.splice(i, 1); 
+                        hC(f.v, cx, cy - 40); 
+                    } else if (f.y > window.innerHeight) { 
+                        f.e.remove(); 
+                        fds.splice(i, 1); 
+                    }
                 } 
                 lid = requestAnimationFrame(loop); 
             }
             
             function hC(v, x, y) { 
-                st.cur += v; DOM.tc.innerText = st.cur; DOM.tt.innerText = st.t - st.cur; DOM.b.classList.replace('opacity-0', 'opacity-100'); 
+                st.cur += v; 
+                DOM.tc.innerText = st.cur; 
+                DOM.tt.innerText = Math.max(0, st.t - st.cur); 
+                DOM.b.classList.replace('opacity-0', 'opacity-100'); 
                 
                 if (st.cur === st.t) { 
                     AudioSys.m2Eat(); st.s += 20; st.c++; st.l++; MainCtrl.updateSharedHUD(st.h, st.s, st.l, st.c); 
-                    DOM.m.style.transform = 'translateX(-50%) scale(1.2)'; FX.burst(x, y, 40); FX.text(x, y - 50, "NYAM!", '#4ECDC4'); 
+                    DOM.m.style.transform = 'translateX(-50%) scale(1.2)'; 
+                    FX.burst(x, y, 40); FX.text(x, y - 50, "NYAM!", '#4ECDC4'); 
+                    
                     fds.forEach(f => f.e.remove()); fds = []; 
-                    setTimeout(() => { DOM.m.style.transform = 'translateX(-50%)'; DOM.m.className = `absolute bottom-10 left-1/2 w-40 h-40 jelly-monster ${MainCtrl.randColor()} flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)] transition-transform will-change-transform`; nT(); }, 500); 
+                    
+                    setTimeout(() => { 
+                        if(!ply) return;
+                        DOM.m.style.transform = 'translateX(-50%)'; 
+                        DOM.m.className = `absolute bottom-10 left-1/2 -translate-x-1/2 w-40 h-40 jelly-monster ${MainCtrl.randColor()} flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)] transition-colors duration-500`; 
+                        nT(); 
+                    }, 500); 
                 } else if (st.cur > st.t) { 
                     AudioSys.m2Burp(); st.h--; st.c = 0; MainCtrl.updateSharedHUD(st.h, st.s, st.l, st.c); 
-                    DOM.m.classList.add('anim-shake'); FX.smoke(x, y, 20); FX.text(x, y - 50, "KEKENYANGAN!", '#FF6B6B'); 
-                    setTimeout(() => DOM.m.classList.remove('anim-shake'), 400); 
-                    if (st.h <= 0) { ply = false; MainCtrl.gameOver(st.s, 2); } 
-                    else { fds.forEach(f => f.e.remove()); fds = []; nT(); } 
+                    DOM.m.classList.add('anim-shake'); 
+                    FX.smoke(x, y, 20); FX.text(x, y - 50, "KEKENYANGAN!", '#FF6B6B'); 
+                    
+                    setTimeout(() => { if(DOM && DOM.m) DOM.m.classList.remove('anim-shake'); }, 400); 
+                    
+                    if (st.h <= 0) { 
+                        ply = false; MainCtrl.gameOver(st.s, 2); 
+                    } else { 
+                        fds.forEach(f => f.e.remove()); fds = []; nT(); 
+                    } 
                 } else { 
-                    AudioSys.sfxCount(); DOM.m.style.transform = 'translateX(-50%) scale(1.05)'; setTimeout(() => DOM.m.style.transform = 'translateX(-50%)', 100); 
+                    AudioSys.sfxCount(); 
+                    DOM.m.style.transform = 'translateX(-50%) scale(1.05)'; 
+                    setTimeout(() => { if(ply && DOM.m) DOM.m.style.transform = 'translateX(-50%)'; }, 100); 
                 } 
             }
 
@@ -1096,10 +1182,14 @@
 
         // MODE 3
         const Mode3 = (function(){
-            const DOM = { c:document.getElementById('m3Cage'), a:document.getElementById('m3Animal'), p:document.getElementById('m3Padlock'), i:document.getElementById('m3Instruction'), q:document.getElementById('m3Question'), g:document.getElementById('m3Grid'), qBox:document.getElementById('m3QBox') };
+            let DOM;
             let st; const C = ['cyan','yellow','pink'];
             return {
-                start: () => { st={h:3,s:0,l:1,c:0,lck:false,an:''}; MainCtrl.updateSharedHUD(3,0,1,0); rC(); nQ(); }, stop: () => { st.lck=true; }
+                start: () => { 
+                    DOM = { c:document.getElementById('m3Cage'), a:document.getElementById('m3Animal'), p:document.getElementById('m3Padlock'), i:document.getElementById('m3Instruction'), q:document.getElementById('m3Question'), g:document.getElementById('m3Grid'), qBox:document.getElementById('m3QBox') };
+                    st={h:3,s:0,l:1,c:0,lck:false,an:''}; MainCtrl.updateSharedHUD(3,0,1,0); rC(); nQ(); 
+                }, 
+                stop: () => { st.lck=true; }
             };
             function rC(){ DOM.c.classList.remove('open'); DOM.p.classList.remove('padlock-broken'); st.an=ANIMAL_LIST[Math.floor(Math.random()*ANIMAL_LIST.length)]; DOM.a.innerText=st.an; }
             function nQ(){ 
@@ -1137,7 +1227,7 @@
                     if (num1 < num2) a = '<';
                     else if (num1 > num2) a = '>';
                     else a = '=';
-                    opts = ['<', '=', '>']; // Always these three
+                    opts = ['<', '=', '>'];
                 }
 
                 DOM.i.innerText = inst; DOM.q.innerText = txt; 
@@ -1162,20 +1252,21 @@
 
         // MODE 4 (Pasar Ajaib)
         const Mode4 = (function() {
-            const DOM = {
-                phase1: document.getElementById('m4ShopPhase'), phase2: document.getElementById('m4PayPhase'),
-                cashier: document.getElementById('m4CashierEmoji'), bubble: document.getElementById('m4SpeechBubble'),
-                taskPrompt: document.getElementById('m4TaskPrompt'), targetList: document.getElementById('m4TargetList'),
-                shelf: document.getElementById('m4ShelfContainer'), cart: document.getElementById('m4CartContainer'),
-                targetPrice: document.getElementById('m4TargetPrice'), paidAmt: document.getElementById('m4PaidAmount')
-            };
-
+            let DOM;
             const ITEMS = [ { id: 'apple', emoji: '🍎', price: 2 }, { id: 'banana', emoji: '🍌', price: 3 }, { id: 'melon', emoji: '🍉', price: 4 }, { id: 'grape', emoji: '🍇', price: 5 } ];
             const CASHIERS = ['👨‍🌾','👩‍🌾','🐻','🐰','🍏','🍊'];
-
             let st = { hp: 3, score: 0, level: 1, combo: 0, locked: false, targetItems: {}, cartItems: {}, totalPrice: 0, paid: 0, phase: 1 };
 
-            function start() { st = { hp: 3, score: 0, level: 1, combo: 0, locked: false }; MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo); nextTask(); }
+            function start() { 
+                DOM = {
+                    phase1: document.getElementById('m4ShopPhase'), phase2: document.getElementById('m4PayPhase'),
+                    cashier: document.getElementById('m4CashierEmoji'), bubble: document.getElementById('m4SpeechBubble'),
+                    taskPrompt: document.getElementById('m4TaskPrompt'), targetList: document.getElementById('m4TargetList'),
+                    shelf: document.getElementById('m4ShelfContainer'), cart: document.getElementById('m4CartContainer'),
+                    targetPrice: document.getElementById('m4TargetPrice'), paidAmt: document.getElementById('m4PaidAmount')
+                };
+                st = { hp: 3, score: 0, level: 1, combo: 0, locked: false }; MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo); nextTask(); 
+            }
             function stop() { st.locked = true; }
 
             function nextTask() {
@@ -1243,13 +1334,14 @@
 
         // MODE 5: POP-POP BALLOONS
         const Mode5 = (function() {
-            const DOM = { cont: document.getElementById('m5BalloonsContainer'), prompt: document.getElementById('m5TargetText'), spk: document.getElementById('m5BtnSpeaker') };
+            let DOM;
             let st = { hp: 3, score: 0, level: 1, combo: 0, locked: false, target: 1 };
             const C = ['bg-pink-400', 'bg-cyan-400', 'bg-yellow-400', 'bg-purple-400', 'bg-green-400'];
 
             function start() {
+                DOM = { cont: document.getElementById('m5BalloonsContainer'), prompt: document.getElementById('m5TargetText'), spk: document.getElementById('m5BtnSpeaker') };
                 st = { hp: 3, score: 0, level: 1, combo: 0, locked: false }; MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
-                DOM.spk.onclick = () => { if(!st.locked) { AudioSys.m4Talk(); DOM.prompt.parentElement.classList.add('anim-shake'); setTimeout(()=>DOM.prompt.parentElement.classList.remove('anim-shake'), 400); } };
+                DOM.spk.onclick = () => { if(!st.locked && DOM.prompt && DOM.prompt.parentElement) { AudioSys.m4Talk(); DOM.prompt.parentElement.classList.add('anim-shake'); setTimeout(()=>DOM.prompt.parentElement.classList.remove('anim-shake'), 400); } };
                 nextLvl();
             }
 
@@ -1272,10 +1364,8 @@
                     b.className = `balloon ${C[idx%C.length]} pop-in cursor-pointer hover:brightness-110`;
                     b.style.animationDelay = `${idx*0.1}s`;
                     
-                    // Add string
                     const str = document.createElement('div'); str.className = 'balloon-string'; b.appendChild(str);
                     
-                    // Add stars
                     for(let i=0; i<opt; i++) {
                         const s = document.createElement('span'); s.className = 'star-icon text-yellow-300'; s.innerText = '⭐';
                         b.appendChild(s);
@@ -1298,20 +1388,21 @@
                     wrap.appendChild(b); DOM.cont.appendChild(wrap);
                 });
                 
-                setTimeout(() => DOM.spk.onclick(), 500);
+                setTimeout(() => { if(DOM.spk) DOM.spk.onclick(); }, 500);
             }
             return { start, stop };
         })();
 
         // MODE 6: ROBOT PENCARI PASANGAN
         const Mode6 = (function() {
-            const DOM = { area: document.getElementById('m6Area'), src: document.getElementById('m6Source'), rbts: document.getElementById('m6Robots'), svg: document.getElementById('m6Svg'), line: document.getElementById('m6Line') };
+            let DOM;
             let st = { hp: 3, score: 0, level: 1, combo: 0, locked: false, target: 1 };
             let isDrawing = false;
             
             const ICONS = ['🏀','🍪','🍓','🍬','🚗','🧸'];
 
             function start() {
+                DOM = { area: document.getElementById('m6Area'), src: document.getElementById('m6Source'), rbts: document.getElementById('m6Robots'), svg: document.getElementById('m6Svg'), line: document.getElementById('m6Line') };
                 st = { hp: 3, score: 0, level: 1, combo: 0, locked: false }; MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
                 window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onUp);
                 nextLvl();
@@ -1323,7 +1414,6 @@
                 st.locked = false; DOM.line.style.opacity = '0';
                 st.target = Math.floor(Math.random() * 10) + 1;
                 
-                // Left box items
                 DOM.src.innerHTML = '';
                 const ic = ICONS[Math.floor(Math.random() * ICONS.length)];
                 for(let i=0; i<st.target; i++) {
@@ -1332,7 +1422,6 @@
 
                 DOM.src.onpointerdown = onDown;
 
-                // Right robots
                 let opts = [st.target];
                 while(opts.length < 3) {
                     let f = st.target + (Math.floor(Math.random()*4)+1) * (Math.random()>0.5?1:-1);
@@ -1399,7 +1488,7 @@
             return { start, stop };
         })();
 
-        // Bootstrap App
+        // Bootstrap App lazily
         window.addEventListener('DOMContentLoaded', MainCtrl.init);
     </script>
 </body>
