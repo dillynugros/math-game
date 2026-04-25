@@ -351,14 +351,25 @@
             </div>
         </header>
         
-        <div class="flex-1 overflow-y-auto p-6">
-            <h1 class="font-kids text-3xl text-green-700 text-center mb-6 drop-shadow-sm">Koleksi Hewan</h1>
-            <div class="grid grid-cols-3 md:grid-cols-4 gap-4" id="zooGrid"></div>
+        <!-- Modified: Pagination Layout -->
+        <div class="flex-1 p-6 flex flex-col justify-between overflow-hidden">
+            <div>
+                <h1 class="font-kids text-3xl text-green-700 text-center mb-4 drop-shadow-sm">Koleksi Hewan</h1>
+                <div class="grid grid-cols-3 md:grid-cols-4 gap-4 w-full" id="zooGrid"></div>
+            </div>
+            
+            <div class="flex justify-center items-center gap-4 mt-6 mb-2">
+                <button id="btnPrevPage" class="clay-btn yellow px-4 py-2 text-xl font-kids" style="visibility: hidden;">&lt;</button>
+                <span id="zooPageText" class="font-kids text-green-800 text-xl">1 / 2</span>
+                <button id="btnNextPage" class="clay-btn yellow px-4 py-2 text-xl font-kids">&gt;</button>
+            </div>
         </div>
         
-        <div class="w-full p-6 pt-2 flex justify-center shrink-0 pointer-events-auto">
-            <div class="w-full max-w-sm">
-                <button id="btnFeedZoo" class="clay-btn pink text-white font-kids text-xl py-4 w-full shadow-xl flex items-center justify-center gap-2">🍎 Beri Makan (10 🌟)</button>
+        <!-- Bottom Controls with Reset Button -->
+        <div class="w-full p-4 pt-2 flex justify-center shrink-0 pointer-events-auto pb-6">
+            <div class="w-full max-w-sm flex gap-3">
+                <button id="btnResetZoo" class="clay-btn orange text-white font-kids text-2xl py-4 px-6 shadow-xl flex items-center justify-center" title="Reset Hewan">🔄</button>
+                <button id="btnFeedZoo" class="clay-btn pink text-white font-kids text-xl py-4 flex-1 shadow-xl flex items-center justify-center gap-2">🍎 Beri Makan (10 🌟)</button>
             </div>
         </div>
     </div>
@@ -456,7 +467,6 @@
             <div class="text-white text-2xl anim-float">⬇️</div>
         </div>
         <main id="eatPlayArea" class="flex-1 relative w-full h-full overflow-hidden touch-none pt-24">
-            <!-- REVERTED TO JELLY BLOB STABLE -->
             <div id="m2Monster" class="absolute bottom-10 left-1/2 -translate-x-1/2 w-40 h-40 jelly-monster bg-orange-400 flex flex-col items-center justify-center z-30 touch-none shadow-[0_20px_30px_rgba(0,0,0,0.3)] transition-colors duration-500">
                 <div class="absolute top-6 flex gap-8">
                     <div class="w-4 h-6 bg-black rounded-full anim-blink" id="m2EyeL"><div class="w-2 h-2 bg-white rounded-full mt-1 ml-1"></div></div>
@@ -542,7 +552,6 @@
                 </div>
                 
                 <div class="flex justify-center gap-4 mt-4 w-full pb-8">
-                    <!-- Koin bentuk membulat sesuai request -->
                     <button class="coin-btn" onclick="Mode4.addCoin(1)">🪙 1</button>
                     <button class="coin-btn" onclick="Mode4.addCoin(2)">🪙 2</button>
                     <button class="coin-btn" onclick="Mode4.addCoin(5)">🪙 5</button>
@@ -614,7 +623,11 @@
                 getEqHat: () => localStorage.getItem('kpop_math_eq_hat') || '',
                 setEqHat: (e) => localStorage.setItem('kpop_math_eq_hat', e),
                 getAnimalSizes: () => JSON.parse(localStorage.getItem('kpop_math_animal_sizes')) || {},
-                setAnimalSize: (e, s) => { let sizes = StorageController.getAnimalSizes(); sizes[e] = s; localStorage.setItem('kpop_math_animal_sizes', JSON.stringify(sizes)); }
+                setAnimalSize: (e, s) => { let sizes = StorageController.getAnimalSizes(); sizes[e] = s; localStorage.setItem('kpop_math_animal_sizes', JSON.stringify(sizes)); },
+                resetAnimals: () => {
+                    localStorage.setItem('kpop_math_animals', JSON.stringify([]));
+                    localStorage.setItem('kpop_math_animal_sizes', JSON.stringify({}));
+                }
             };
         })();
 
@@ -751,6 +764,8 @@
         const MetaCtrl = (function() {
             let zoo, hats, zooGrid, hatsGrid;
             let selectedAnimal = null;
+            let currentPage = 0;
+            const itemsPerPage = 12;
             
             function initDOM() {
                 if(!zoo) {
@@ -758,10 +773,29 @@
                     hats = document.getElementById('uiHats');
                     zooGrid = document.getElementById('zooGrid'); 
                     hatsGrid = document.getElementById('hatsGrid');
+
+                    // Bind Zoo Pagination
+                    document.getElementById('btnPrevPage').onclick = () => {
+                        if (currentPage > 0) { currentPage--; AudioSys.m4Pop(); renderZoo(); }
+                    };
+                    document.getElementById('btnNextPage').onclick = () => {
+                        const totalPages = Math.ceil(ANIMAL_LIST.length / itemsPerPage);
+                        if (currentPage < totalPages - 1) { currentPage++; AudioSys.m4Pop(); renderZoo(); }
+                    };
+
+                    // Bind Zoo Reset
+                    document.getElementById('btnResetZoo').onclick = () => {
+                        StorageController.resetAnimals();
+                        selectedAnimal = null;
+                        AudioSys.m1Wrong();
+                        const btnCenter = MainCtrl.getCenter(document.getElementById('btnResetZoo'));
+                        FX.text(btnCenter.x, btnCenter.y - 50, "RESET!", '#FF6B6B');
+                        renderZoo();
+                    };
                 }
             }
 
-            function openZoo() { initDOM(); AudioSys.init(); AudioSys.startBGM(); zoo.classList.remove('hidden'); setTimeout(()=>zoo.classList.remove('opacity-0'), 50); renderZoo(); }
+            function openZoo() { initDOM(); AudioSys.init(); AudioSys.startBGM(); currentPage = 0; zoo.classList.remove('hidden'); setTimeout(()=>zoo.classList.remove('opacity-0'), 50); renderZoo(); }
             function openHats() { initDOM(); AudioSys.init(); AudioSys.startBGM(); hats.classList.remove('hidden'); setTimeout(()=>hats.classList.remove('opacity-0'), 50); renderHats(); }
             function closeAll() { initDOM(); zoo.classList.add('opacity-0'); hats.classList.add('opacity-0'); setTimeout(()=>{zoo.classList.add('hidden'); hats.classList.add('hidden');}, 500); }
 
@@ -773,9 +807,19 @@
                 
                 if (o.length > 0 && (!selectedAnimal || !o.includes(selectedAnimal))) {
                     selectedAnimal = o[0];
+                } else if (o.length === 0) {
+                    selectedAnimal = null;
                 }
 
-                ANIMAL_LIST.forEach((a, i) => {
+                const totalPages = Math.ceil(ANIMAL_LIST.length / itemsPerPage);
+                document.getElementById('zooPageText').innerText = `${currentPage + 1} / ${totalPages}`;
+                
+                document.getElementById('btnPrevPage').style.visibility = currentPage > 0 ? 'visible' : 'hidden';
+                document.getElementById('btnNextPage').style.visibility = currentPage < totalPages - 1 ? 'visible' : 'hidden';
+
+                const currentAnimals = ANIMAL_LIST.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+
+                currentAnimals.forEach((a, i) => {
                     const el = document.createElement('div');
                     if(o.includes(a)) { 
                         let fSize = sizes[a] || 40;
@@ -824,7 +868,7 @@
                 });
             }
 
-            function feedZooAction(e) {
+            document.getElementById('btnFeedZoo').onclick = (e) => {
                 initDOM();
                 const o = StorageController.getAnimals();
                 const btnCenter = MainCtrl.getCenter(e.currentTarget);
@@ -867,9 +911,9 @@
                     e.currentTarget.classList.add('anim-shake');
                     setTimeout(() => e.currentTarget.classList.remove('anim-shake'), 400);
                 }
-            }
+            };
 
-            return { openZoo, openHats, closeAll, feedZooAction };
+            return { openZoo, openHats, closeAll };
         })();
 
         /**
@@ -909,8 +953,6 @@
                 
                 document.getElementById('btnZoo').onclick = () => { DOM.ui.start.classList.add('opacity-0', 'pointer-events-none'); MetaCtrl.openZoo(); };
                 document.getElementById('btnHats').onclick = () => { DOM.ui.start.classList.add('opacity-0', 'pointer-events-none'); MetaCtrl.openHats(); };
-                
-                document.getElementById('btnFeedZoo').onclick = MetaCtrl.feedZooAction;
 
                 document.getElementById('btnSave').onclick = () => {
                     if(!currentMode || !activeGame) return;
