@@ -607,7 +607,7 @@
     <!-- ============================================== -->
     <!-- CONFIRMATION MODAL                             -->
     <!-- ============================================== -->
-    <div id="uiConfirmModal" class="absolute inset-0 flex items-center justify-center z-[100] bg-black/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+    <div id="uiConfirmModal" class="absolute inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 pointer-events-auto" style="z-index: 9999;">
         <div class="clay-card p-8 text-center max-w-sm w-10/12 transform scale-90 transition-transform duration-300" id="confirmModalCard">
             <h2 class="font-kids text-3xl text-pink-500 mb-6 drop-shadow-sm">Apa kamu yakin?</h2>
             <div class="flex gap-4 w-full">
@@ -808,6 +808,7 @@
                         confirmModal.classList.remove('hidden');
                         setTimeout(() => {
                             confirmModal.classList.remove('opacity-0');
+                            confirmModal.classList.add('opacity-100');
                             modalCard.classList.remove('scale-90');
                             modalCard.classList.add('scale-100');
                         }, 10);
@@ -816,6 +817,7 @@
                     // Bind Confirmation Modal
                     confirmNo.onclick = () => {
                         AudioSys.m4Pop();
+                        confirmModal.classList.remove('opacity-100');
                         confirmModal.classList.add('opacity-0');
                         modalCard.classList.remove('scale-100');
                         modalCard.classList.add('scale-90');
@@ -823,6 +825,7 @@
                     };
 
                     confirmYes.onclick = () => {
+                        confirmModal.classList.remove('opacity-100');
                         confirmModal.classList.add('opacity-0');
                         modalCard.classList.remove('scale-100');
                         modalCard.classList.add('scale-90');
