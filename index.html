@@ -21,6 +21,10 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            overscroll-behavior: none; /* Mencegah fitur pull-to-refresh di mobile browser */
+        }
+
         body {
             font-family: 'Nunito', sans-serif;
             background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
@@ -31,6 +35,7 @@
             height: 100vh;
             height: 100dvh;
             touch-action: none;
+            overscroll-behavior: none;
         }
 
         /* --- CUSTOM SCROLLBAR & TOUCH FIX --- */
@@ -552,6 +557,7 @@
                 </div>
                 
                 <div class="flex justify-center gap-4 mt-4 w-full pb-8">
+                    <!-- Koin bentuk membulat sesuai request -->
                     <button class="coin-btn" onclick="Mode4.addCoin(1)">🪙 1</button>
                     <button class="coin-btn" onclick="Mode4.addCoin(2)">🪙 2</button>
                     <button class="coin-btn" onclick="Mode4.addCoin(5)">🪙 5</button>
@@ -570,7 +576,7 @@
     <!-- ============================================== -->
     <!-- MODE 5: POP-POP BALLOONS (NEW)                 -->
     <!-- ============================================== -->
-    <div id="uiMode5" class="absolute inset-0 flex-col z-20 hidden m5-bg">
+    <div id="uiMode5" class="absolute inset-0 flex-col z-20 hidden m5-bg touch-none">
         <div class="absolute top-20 left-1/2 -translate-x-1/2 w-full px-6 flex justify-between items-center z-10 pointer-events-none">
             <div class="bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full border-4 border-blue-400 shadow-md flex items-center gap-2" id="m5PromptBox">
                 <span class="font-kids text-blue-600 text-lg">Pecahkan: <span id="m5TargetText" class="text-3xl text-pink-500">3</span> ⭐</span>
@@ -585,7 +591,7 @@
     <!-- ============================================== -->
     <!-- MODE 6: ROBOT PENCARI PASANGAN (NEW)           -->
     <!-- ============================================== -->
-    <div id="uiMode6" class="absolute inset-0 flex-col z-20 hidden m6-bg">
+    <div id="uiMode6" class="absolute inset-0 flex-col z-20 hidden m6-bg touch-none">
         <!-- SVG for Drawing Glow Line -->
         <svg id="m6Svg" class="absolute inset-0 pointer-events-none z-30" style="width: 100%; height: 100%;">
             <line id="m6Line" x1="0" y1="0" x2="0" y2="0" stroke="#fef08a" stroke-width="8" stroke-linecap="round" style="filter: drop-shadow(0 0 15px #fef08a); opacity: 0;"></line>
@@ -1493,14 +1499,23 @@
             
             const ICONS = ['🏀','🍪','🍓','🍬','🚗','🧸'];
 
+            function preventTouch(e) { if(isDrawing && e.cancelable) e.preventDefault(); }
+
             function start() {
                 DOM = { area: document.getElementById('m6Area'), src: document.getElementById('m6Source'), rbts: document.getElementById('m6Robots'), svg: document.getElementById('m6Svg'), line: document.getElementById('m6Line') };
                 st = { hp: 3, score: 0, level: 1, combo: 0, locked: false }; MainCtrl.updateSharedHUD(st.hp, st.score, st.level, st.combo);
-                window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onUp);
+                window.addEventListener('pointermove', onMove, { passive: false }); 
+                window.addEventListener('pointerup', onUp);
+                window.addEventListener('touchmove', preventTouch, { passive: false });
                 nextLvl();
             }
 
-            function stop() { st.locked = true; window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); }
+            function stop() { 
+                st.locked = true; 
+                window.removeEventListener('pointermove', onMove); 
+                window.removeEventListener('pointerup', onUp); 
+                window.removeEventListener('touchmove', preventTouch);
+            }
 
             function nextLvl() {
                 st.locked = false; DOM.line.style.opacity = '0';
@@ -1545,6 +1560,7 @@
 
             function onMove(e) {
                 if(!isDrawing) return;
+                if(e.cancelable) e.preventDefault();
                 DOM.line.setAttribute('x2', e.clientX); DOM.line.setAttribute('y2', e.clientY);
             }
 
