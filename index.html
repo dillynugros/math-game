@@ -604,6 +604,19 @@
         </main>
     </div>
 
+    <!-- ============================================== -->
+    <!-- CONFIRMATION MODAL                             -->
+    <!-- ============================================== -->
+    <div id="uiConfirmModal" class="absolute inset-0 flex items-center justify-center z-[100] bg-black/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="clay-card p-8 text-center max-w-sm w-10/12 transform scale-90 transition-transform duration-300" id="confirmModalCard">
+            <h2 class="font-kids text-3xl text-pink-500 mb-6 drop-shadow-sm">Apa kamu yakin?</h2>
+            <div class="flex gap-4 w-full">
+                <button id="btnConfirmNo" class="clay-btn cyan flex-1 text-white font-kids text-xl py-3 border-2 border-white">Tidak</button>
+                <button id="btnConfirmYes" class="clay-btn pink flex-1 text-white font-kids text-xl py-3 border-2 border-white">Ya</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         /**
          * ==========================================
@@ -763,6 +776,7 @@
          */
         const MetaCtrl = (function() {
             let zoo, hats, zooGrid, hatsGrid;
+            let confirmModal, confirmYes, confirmNo, modalCard;
             let selectedAnimal = null;
             let currentPage = 0;
             const itemsPerPage = 12;
@@ -773,6 +787,11 @@
                     hats = document.getElementById('uiHats');
                     zooGrid = document.getElementById('zooGrid'); 
                     hatsGrid = document.getElementById('hatsGrid');
+
+                    confirmModal = document.getElementById('uiConfirmModal');
+                    confirmYes = document.getElementById('btnConfirmYes');
+                    confirmNo = document.getElementById('btnConfirmNo');
+                    modalCard = document.getElementById('confirmModalCard');
 
                     // Bind Zoo Pagination
                     document.getElementById('btnPrevPage').onclick = () => {
@@ -785,6 +804,30 @@
 
                     // Bind Zoo Reset
                     document.getElementById('btnResetZoo').onclick = () => {
+                        AudioSys.m4Pop();
+                        confirmModal.classList.remove('hidden');
+                        setTimeout(() => {
+                            confirmModal.classList.remove('opacity-0');
+                            modalCard.classList.remove('scale-90');
+                            modalCard.classList.add('scale-100');
+                        }, 10);
+                    };
+
+                    // Bind Confirmation Modal
+                    confirmNo.onclick = () => {
+                        AudioSys.m4Pop();
+                        confirmModal.classList.add('opacity-0');
+                        modalCard.classList.remove('scale-100');
+                        modalCard.classList.add('scale-90');
+                        setTimeout(() => confirmModal.classList.add('hidden'), 300);
+                    };
+
+                    confirmYes.onclick = () => {
+                        confirmModal.classList.add('opacity-0');
+                        modalCard.classList.remove('scale-100');
+                        modalCard.classList.add('scale-90');
+                        setTimeout(() => confirmModal.classList.add('hidden'), 300);
+                        
                         StorageController.resetAnimals();
                         selectedAnimal = null;
                         AudioSys.m1Wrong();
